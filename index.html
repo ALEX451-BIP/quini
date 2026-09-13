@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quini 6 — Sistema de Estadísticas</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:system-ui,Segoe UI,Arial;padding:18px;max-width:1200px;margin:auto}
+h1{font-size:26px;margin:8px 0 4px;text-align:center}
+h2{font-size:19px;margin:26px 0 10px;color:#58a6ff;border-bottom:1px solid #21262d;padding-bottom:6px}
+h3{font-size:14px;margin:14px 0 6px;color:#8b98a9}
+p.sub{text-align:center;color:#8b98a9;font-size:12px;margin-bottom:18px}
+.card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:16px;margin:8px 0}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.col{flex:1;min-width:260px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}
+th,td{padding:5px 8px;text-align:left;border-bottom:1px solid #21262d}
+th{color:#8b98a9;font-weight:600}
+.mx{font-weight:700;color:#3fb950}
+table td:first-child{font-weight:700}
+.bar{display:block;height:8px;background:#21262d;border-radius:4px;overflow:hidden;margin-top:3px}
+.bar>i{display:block;height:100%;background:#58a6ff;border-radius:4px}
+.sug{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sug .mod{font-weight:700;color:#d29922;min-width:130px}
+.b{display:inline-block;min-width:34px;text-align:center;padding:6px 2px;margin:2px;background:#238636;color:#fff;border-radius:8px;font-size:13px;font-weight:700}
+.b.hot{background:#9e6a03}.b.cold{background:#a3542e}
+.disc{font-size:11.5px;color:#8b98a9;border:1px dashed #30363d;border-radius:8px;padding:10px;margin-top:18px}
+.meta{font-size:11px;color:#6e7681;text-align:center;margin-top:22px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.sorteo{font-size:12px;margin:6px 0}
+.sorteo .nro{font-weight:700;color:#58a6ff}
+.sorteo .f{color:#8b98a9;margin-left:6px}
+@media(max-width:640px){.sug .mod{min-width:100%}}
+</style></head><body>
+<h1>🎱 Quini 6 — Sistema de Estadísticas</h1>
+<p class='sub'>Histórico: <b>547 sorteos</b> (09/2020 → 09/2026) · Fuente: Lotería de Santa Fe (oficial), vía SoyTimbero · Último sorteo: <b>#3407</b> del <b>6/9/2026</b></p>
+<h2>Jugadas estadísticas sugeridas</h2><div class='card'><div class='sug'>
+<span class='mod'>Tradicional</span><span class='b'>04</span> <span class='b'>12</span> <span class='b'>13</span> <span class='b'>27</span> <span class='b'>39</span> <span class='b'>41</span>
+<span class='mod'>Segunda</span><span class='b'>07</span> <span class='b'>09</span> <span class='b'>15</span> <span class='b'>21</span> <span class='b'>33</span> <span class='b'>42</span>
+<span class='mod'>Revancha</span><span class='b'>04</span> <span class='b'>13</span> <span class='b'>19</span> <span class='b'>27</span> <span class='b'>35</span> <span class='b'>42</span>
+<span class='mod'>Siempre Sale</span><span class='b'>08</span> <span class='b'>11</span> <span class='b'>12</span> <span class='b'>29</span> <span class='b'>34</span> <span class='b'>40</span>
+</div><p class='disc' style='margin-top:12px'>Criterio: mayor frecuencia histórica + mayor atraso (números que hace tiempo no salen), penalizando números salidos en los últimos 60 sorteos y equilibrando decenas/unidades. <b>NO garantiza ganar</b> — cada combinación tiene la misma probabilidad: 1 en 9.366.819.</p></div>
+<h2>Últimos sorteos</h2><div class='card'><div class='grid4'>
+<div class='sorteo'>
+<span class='nro'>#3407</span><span class='f'>6/9/2026</span>
+<div>Tradicional: <span class='b'>19</span> <span class='b'>22</span> <span class='b'>10</span> <span class='b'>29</span> <span class='b'>36</span> <span class='b'>43</span></div>
+<div>Segunda: <span class='b'>45</span> <span class='b'>03</span> <span class='b'>28</span> <span class='b'>32</span> <span class='b'>24</span> <span class='b'>10</span></div>
+<div>Revancha: <span class='b'>20</span> <span class='b'>24</span> <span class='b'>00</span> <span class='b'>08</span> <span class='b'>23</span> <span class='b'>32</span></div>
+<div>Siempre Sale: <span class='b'>41</span> <span class='b'>30</span> <span class='b'>09</span> <span class='b'>01</span> <span class='b'>35</span> <span class='b'>21</span></div>
+</div>
+<div class='sorteo'>
+<span class='nro'>#3406</span><span class='f'>2/9/2026</span>
+<div>Tradicional: <span class='b'>02</span> <span class='b'>20</span> <span class='b'>16</span> <span class='b'>38</span> <span class='b'>22</span> <span class='b'>21</span></div>
+<div>Segunda: <span class='b'>23</span> <span class='b'>34</span> <span class='b'>12</span> <span class='b'>28</span> <span class='b'>26</span> <span class='b'>16</span></div>
+<div>Revancha: <span class='b'>37</span> <span class='b'>03</span> <span class='b'>32</span> <span class='b'>00</span> <span class='b'>41</span> <span class='b'>22</span></div>
+<div>Siempre Sale: <span class='b'>04</span> <span class='b'>03</span> <span class='b'>13</span> <span class='b'>42</span> <span class='b'>23</span> <span class='b'>00</span></div>
+</div>
+<div class='sorteo'>
+<span class='nro'>#3404</span><span class='f'>26/8/2026</span>
+<div>Tradicional: <span class='b'>07</span> <span class='b'>23</span> <span class='b'>45</span> <span class='b'>14</span> <span class='b'>22</span> <span class='b'>40</span></div>
+<div>Segunda: <span class='b'>17</span> <span class='b'>40</span> <span class='b'>38</span> <span class='b'>36</span> <span class='b'>11</span> <span class='b'>05</span></div>
+<div>Revancha: <span class='b'>05</span> <span class='b'>00</span> <span class='b'>10</span> <span class='b'>26</span> <span class='b'>20</span> <span class='b'>28</span></div>
+<div>Siempre Sale: <span class='b'>13</span> <span class='b'>36</span> <span class='b'>14</span> <span class='b'>06</span> <span class='b'>37</span> <span class='b'>21</span></div>
+</div>
+<div class='sorteo'>
+<span class='nro'>#3403</span><span class='f'>23/8/2026</span>
+<div>Tradicional: <span class='b'>23</span> <span class='b'>11</span> <span class='b'>16</span> <span class='b'>26</span> <span class='b'>05</span> <span class='b'>09</span></div>
+<div>Segunda: <span class='b'>39</span> <span class='b'>14</span> <span class='b'>10</span> <span class='b'>25</span> <span class='b'>30</span> <span class='b'>37</span></div>
+<div>Revancha: <span class='b'>10</span> <span class='b'>08</span> <span class='b'>22</span> <span class='b'>36</span> <span class='b'>30</span> <span class='b'>37</span></div>
+<div>Siempre Sale: <span class='b'>20</span> <span class='b'>28</span> <span class='b'>24</span> <span class='b'>23</span> <span class='b'>39</span> <span class='b'>35</span></div>
+</div>
+<div class='sorteo'>
+<span class='nro'>#3402</span><span class='f'>19/8/2026</span>
+<div>Tradicional: <span class='b'>00</span> <span class='b'>27</span> <span class='b'>42</span> <span class='b'>21</span> <span class='b'>24</span> <span class='b'>26</span></div>
+<div>Segunda: <span class='b'>27</span> <span class='b'>36</span> <span class='b'>19</span> <span class='b'>25</span> <span class='b'>24</span> <span class='b'>29</span></div>
+<div>Revancha: <span class='b'>39</span> <span class='b'>29</span> <span class='b'>02</span> <span class='b'>09</span> <span class='b'>36</span> <span class='b'>21</span></div>
+<div>Siempre Sale: <span class='b'>20</span> <span class='b'>01</span> <span class='b'>04</span> <span class='b'>37</span> <span class='b'>05</span> <span class='b'>43</span></div>
+</div>
+<div class='sorteo'>
+<span class='nro'>#3401</span><span class='f'>16/8/2026</span>
+<div>Tradicional: <span class='b'>10</span> <span class='b'>17</span> <span class='b'>01</span> <span class='b'>25</span> <span class='b'>02</span> <span class='b'>06</span></div>
+<div>Segunda: <span class='b'>12</span> <span class='b'>10</span> <span class='b'>03</span> <span class='b'>26</span> <span class='b'>33</span> <span class='b'>16</span></div>
+<div>Revancha: <span class='b'>29</span> <span class='b'>24</span> <span class='b'>12</span> <span class='b'>02</span> <span class='b'>40</span> <span class='b'>14</span></div>
+<div>Siempre Sale: <span class='b'>07</span> <span class='b'>21</span> <span class='b'>32</span> <span class='b'>37</span> <span class='b'>30</span> <span class='b'>27</span></div>
+</div>
+<div class='sorteo'>
+<span class='nro'>#3400</span><span class='f'>12/8/2026</span>
+<div>Tradicional: <span class='b'>18</span> <span class='b'>09</span> <span class='b'>15</span> <span class='b'>28</span> <span class='b'>31</span> <span class='b'>02</span></div>
+<div>Segunda: <span class='b'>43</span> <span class='b'>28</span> <span class='b'>34</span> <span class='b'>44</span> <span class='b'>02</span> <span class='b'>18</span></div>
+<div>Revancha: <span class='b'>37</span> <span class='b'>16</span> <span class='b'>12</span> <span class='b'>30</span> <span class='b'>43</span> <span class='b'>29</span></div>
+<div>Siempre Sale: <span class='b'>32</span> <span class='b'>09</span> <span class='b'>10</span> <span class='b'>06</span> <span class='b'>35</span> <span class='b'>02</span></div>
+</div>
+<div class='sorteo'>
+<span class='nro'>#3399</span><span class='f'>9/8/2026</span>
+<div>Tradicional: <span class='b'>30</span> <span class='b'>31</span> <span class='b'>44</span> <span class='b'>25</span> <span class='b'>24</span> <span class='b'>23</span></div>
+<div>Segunda: <span class='b'>20</span> <span class='b'>08</span> <span class='b'>04</span> <span class='b'>24</span> <span class='b'>16</span> <span class='b'>36</span></div>
+<div>Revancha: <span class='b'>24</span> <span class='b'>22</span> <span class='b'>03</span> <span class='b'>25</span> <span class='b'>42</span> <span class='b'>07</span></div>
+<div>Siempre Sale: <span class='b'>33</span> <span class='b'>13</span> <span class='b'>23</span> <span class='b'>21</span> <span class='b'>26</span> <span class='b'>32</span></div>
+</div>
+</div></div>
+<h2>Frecuencias por modalidad (top y cola)</h2>
+<h3>Tradicional — más frecuentes</h3><div class='card'><table><tr><th></th><th>N°</th><th>Veces</th><th>Distribución</th></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>17</td><td>89</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>09</td><td>89</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>04</td><td>86</td><td><span class='bar'><i style='width:97%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>16</td><td>85</td><td><span class='bar'><i style='width:96%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>05</td><td>84</td><td><span class='bar'><i style='width:94%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>23</td><td>81</td><td><span class='bar'><i style='width:91%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>21</td><td>81</td><td><span class='bar'><i style='width:91%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>12</td><td>81</td><td><span class='bar'><i style='width:91%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>02</td><td>80</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>00</td><td>78</td><td><span class='bar'><i style='width:88%'></i></span></td></tr>
+</table></div>
+<h3>Tradicional — más fríos (menos salidos)</h3><div class='card'><div style='display:flex;flex-wrap:wrap;gap:4px'>
+<span class='b cold' title='52 veces'>35</span>
+<span class='b cold' title='56 veces'>11</span>
+<span class='b cold' title='58 veces'>30</span>
+<span class='b cold' title='59 veces'>33</span>
+<span class='b cold' title='61 veces'>28</span>
+<span class='b cold' title='61 veces'>37</span>
+<span class='b cold' title='62 veces'>20</span>
+<span class='b cold' title='62 veces'>32</span>
+<span class='b cold' title='63 veces'>03</span>
+<span class='b cold' title='63 veces'>40</span>
+</div></div>
+<h3>Segunda — más frecuentes</h3><div class='card'><table><tr><th></th><th>N°</th><th>Veces</th><th>Distribución</th></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>24</td><td>92</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>33</td><td>88</td><td><span class='bar'><i style='width:96%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>11</td><td>88</td><td><span class='bar'><i style='width:96%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>38</td><td>85</td><td><span class='bar'><i style='width:92%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>08</td><td>84</td><td><span class='bar'><i style='width:91%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>22</td><td>83</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>37</td><td>79</td><td><span class='bar'><i style='width:86%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>16</td><td>79</td><td><span class='bar'><i style='width:86%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>45</td><td>78</td><td><span class='bar'><i style='width:85%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>35</td><td>78</td><td><span class='bar'><i style='width:85%'></i></span></td></tr>
+</table></div>
+<h3>Segunda — más fríos (menos salidos)</h3><div class='card'><div style='display:flex;flex-wrap:wrap;gap:4px'>
+<span class='b cold' title='52 veces'>05</span>
+<span class='b cold' title='56 veces'>43</span>
+<span class='b cold' title='58 veces'>10</span>
+<span class='b cold' title='58 veces'>28</span>
+<span class='b cold' title='61 veces'>07</span>
+<span class='b cold' title='61 veces'>34</span>
+<span class='b cold' title='62 veces'>29</span>
+<span class='b cold' title='63 veces'>23</span>
+<span class='b cold' title='63 veces'>27</span>
+<span class='b cold' title='63 veces'>36</span>
+</div></div>
+<h3>Revancha — más frecuentes</h3><div class='card'><table><tr><th></th><th>N°</th><th>Veces</th><th>Distribución</th></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>19</td><td>87</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>08</td><td>87</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>37</td><td>86</td><td><span class='bar'><i style='width:99%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>36</td><td>86</td><td><span class='bar'><i style='width:99%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>34</td><td>83</td><td><span class='bar'><i style='width:95%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>17</td><td>82</td><td><span class='bar'><i style='width:94%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>16</td><td>81</td><td><span class='bar'><i style='width:93%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>42</td><td>80</td><td><span class='bar'><i style='width:92%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>40</td><td>78</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>31</td><td>78</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
+</table></div>
+<h3>Revancha — más fríos (menos salidos)</h3><div class='card'><div style='display:flex;flex-wrap:wrap;gap:4px'>
+<span class='b cold' title='51 veces'>39</span>
+<span class='b cold' title='55 veces'>23</span>
+<span class='b cold' title='55 veces'>26</span>
+<span class='b cold' title='55 veces'>30</span>
+<span class='b cold' title='57 veces'>05</span>
+<span class='b cold' title='59 veces'>28</span>
+<span class='b cold' title='61 veces'>00</span>
+<span class='b cold' title='63 veces'>09</span>
+<span class='b cold' title='63 veces'>45</span>
+<span class='b cold' title='64 veces'>06</span>
+</div></div>
+<h3>Siempre Sale — más frecuentes</h3><div class='card'><table><tr><th></th><th>N°</th><th>Veces</th><th>Distribución</th></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>40</td><td>89</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>35</td><td>89</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>29</td><td>85</td><td><span class='bar'><i style='width:96%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>36</td><td>83</td><td><span class='bar'><i style='width:93%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>22</td><td>83</td><td><span class='bar'><i style='width:93%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>17</td><td>82</td><td><span class='bar'><i style='width:92%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>21</td><td>80</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>23</td><td>79</td><td><span class='bar'><i style='width:89%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>10</td><td>79</td><td><span class='bar'><i style='width:89%'></i></span></td></tr>
+<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>14</td><td>76</td><td><span class='bar'><i style='width:85%'></i></span></td></tr>
+</table></div>
+<h3>Siempre Sale — más fríos (menos salidos)</h3><div class='card'><div style='display:flex;flex-wrap:wrap;gap:4px'>
+<span class='b cold' title='55 veces'>39</span>
+<span class='b cold' title='56 veces'>43</span>
+<span class='b cold' title='60 veces'>05</span>
+<span class='b cold' title='62 veces'>08</span>
+<span class='b cold' title='63 veces'>18</span>
+<span class='b cold' title='63 veces'>42</span>
+<span class='b cold' title='63 veces'>44</span>
+<span class='b cold' title='66 veces'>03</span>
+<span class='b cold' title='66 veces'>16</span>
+<span class='b cold' title='66 veces'>31</span>
+</div></div>
+<h2>Atraso actual por modalidad (números hace más sorteos que no salen)</h2><div class='row'>
+<div class='col card'><h3>Tradicional</h3><table><tr><th>N°</th><th>Sorteos sin salir</th></tr>
+<tr><td>13</td><td>24</td></tr>
+<tr><td>32</td><td>17</td></tr>
+<tr><td>33</td><td>17</td></tr>
+<tr><td>39</td><td>17</td></tr>
+<tr><td>41</td><td>12</td></tr>
+<tr><td>08</td><td>11</td></tr>
+<tr><td>12</td><td>11</td></tr>
+<tr><td>34</td><td>10</td></tr>
+</table></div>
+<div class='col card'><h3>Segunda</h3><table><tr><th>N°</th><th>Sorteos sin salir</th></tr>
+<tr><td>09</td><td>23</td></tr>
+<tr><td>15</td><td>23</td></tr>
+<tr><td>07</td><td>18</td></tr>
+<tr><td>21</td><td>13</td></tr>
+<tr><td>42</td><td>12</td></tr>
+<tr><td>00</td><td>10</td></tr>
+<tr><td>01</td><td>10</td></tr>
+<tr><td>06</td><td>10</td></tr>
+</table></div>
+<div class='col card'><h3>Revancha</h3><table><tr><th>N°</th><th>Sorteos sin salir</th></tr>
+<tr><td>13</td><td>22</td></tr>
+<tr><td>27</td><td>20</td></tr>
+<tr><td>35</td><td>19</td></tr>
+<tr><td>15</td><td>16</td></tr>
+<tr><td>19</td><td>16</td></tr>
+<tr><td>34</td><td>14</td></tr>
+<tr><td>04</td><td>13</td></tr>
+<tr><td>17</td><td>13</td></tr>
+</table></div>
+<div class='col card'><h3>Siempre Sale</h3><table><tr><th>N°</th><th>Sorteos sin salir</th></tr>
+<tr><td>12</td><td>23</td></tr>
+<tr><td>11</td><td>22</td></tr>
+<tr><td>08</td><td>21</td></tr>
+<tr><td>22</td><td>15</td></tr>
+<tr><td>31</td><td>14</td></tr>
+<tr><td>34</td><td>14</td></tr>
+<tr><td>19</td><td>13</td></tr>
+<tr><td>29</td><td>13</td></tr>
+</table></div>
+</div>
+<h2>Pares y cuaternas más repetidas (Tradicional)</h2><div class='row'>
+<div class='col card'><h3>Top 15 pares</h3><table><tr><th>Par</th><th>Veces</th></tr>
+<tr><td>04 · 17</td><td>19</td></tr>
+<tr><td>05 · 09</td><td>18</td></tr>
+<tr><td>08 · 21</td><td>18</td></tr>
+<tr><td>00 · 42</td><td>17</td></tr>
+<tr><td>01 · 19</td><td>17</td></tr>
+<tr><td>09 · 12</td><td>16</td></tr>
+<tr><td>04 · 27</td><td>16</td></tr>
+<tr><td>16 · 21</td><td>16</td></tr>
+<tr><td>05 · 31</td><td>16</td></tr>
+<tr><td>04 · 15</td><td>16</td></tr>
+<tr><td>02 · 38</td><td>15</td></tr>
+<tr><td>00 · 41</td><td>15</td></tr>
+<tr><td>04 · 43</td><td>15</td></tr>
+<tr><td>00 · 13</td><td>15</td></tr>
+<tr><td>23 · 43</td><td>15</td></tr>
+</table></div>
+<div class='col card'><h3>Top 10 cuaternas</h3><table><tr><th>Cuaterna</th><th>Veces</th></tr>
+<tr><td>15 · 21 · 23 · 27</td><td>3</td></tr>
+<tr><td>04 · 36 · 37 · 40</td><td>3</td></tr>
+<tr><td>00 · 02 · 09 · 14</td><td>2</td></tr>
+<tr><td>03 · 22 · 36 · 38</td><td>2</td></tr>
+<tr><td>00 · 09 · 12 · 32</td><td>2</td></tr>
+<tr><td>00 · 08 · 13 · 14</td><td>2</td></tr>
+<tr><td>00 · 13 · 14 · 25</td><td>2</td></tr>
+<tr><td>08 · 13 · 14 · 25</td><td>2</td></tr>
+<tr><td>08 · 13 · 14 · 34</td><td>2</td></tr>
+<tr><td>08 · 13 · 25 · 34</td><td>2</td></tr>
+</table></div>
+</div>
+<div class='disc'>⚠️ <b>Aviso honesto:</b> la lotería es azar puro: cada combinación de 6 números entre 45 tiene exactamente <b>1/9.366.819</b> de chances por sorteo, sin importar el historial. Estas estadísticas sirven para <i>elegir con un criterio</i> (evitar combinaciones famosas que se reparten el pozo y en su lugar elegir números poco jugados), pero <b>no aumentan la probabilidad de ganar</b>. Jugá con responsabilidad, +18.</div>
+<div class='meta'>Generado por YARVIS · 12/09/2026 23:20 · 547 sorteos analizados</div>
+</body></html>
