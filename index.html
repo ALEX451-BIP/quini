@@ -1,289 +1,668 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quini 6 — Sistema de Estadísticas</title>
+<title>Quini 6 — Analizador Estadístico</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0d1117;color:#e6edf3;font-family:system-ui,Segoe UI,Arial;padding:18px;max-width:1200px;margin:auto}
-h1{font-size:26px;margin:8px 0 4px;text-align:center}
-h2{font-size:19px;margin:26px 0 10px;color:#58a6ff;border-bottom:1px solid #21262d;padding-bottom:6px}
-h3{font-size:14px;margin:14px 0 6px;color:#8b98a9}
-p.sub{text-align:center;color:#8b98a9;font-size:12px;margin-bottom:18px}
+body{background:#0d1117;color:#e6edf3;font-family:system-ui,"Segoe UI",Arial;padding:18px;max-width:1200px;margin:auto}
+h1{font-size:28px;margin:8px 0 4px;text-align:center}
+h2{font-size:19px;margin:28px 0 10px;color:#58a6ff;border-bottom:1px solid #21262d;padding-bottom:6px}
+h3{font-size:14px;margin:0 0 8px;color:#8b98a9}
+p.sub{text-align:center;color:#8b98a9;font-size:12px;margin-bottom:16px}
 .card{background:#161b22;border:1px solid #21262d;border-radius:12px;padding:16px;margin:8px 0}
 .row{display:flex;gap:14px;flex-wrap:wrap}
 .col{flex:1;min-width:260px}
 table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}
-th,td{padding:5px 8px;text-align:left;border-bottom:1px solid #21262d}
+th,td{padding:5px 8px;text-align:left;border-bottom:1px solid #21262d;white-space:nowrap}
 th{color:#8b98a9;font-weight:600}
-.mx{font-weight:700;color:#3fb950}
-table td:first-child{font-weight:700}
-.bar{display:block;height:8px;background:#21262d;border-radius:4px;overflow:hidden;margin-top:3px}
-.bar>i{display:block;height:100%;background:#58a6ff;border-radius:4px}
-.sug{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.sug .mod{font-weight:700;color:#d29922;min-width:130px}
-.b{display:inline-block;min-width:34px;text-align:center;padding:6px 2px;margin:2px;background:#238636;color:#fff;border-radius:8px;font-size:13px;font-weight:700}
-.b.hot{background:#9e6a03}.b.cold{background:#a3542e}
-.disc{font-size:11.5px;color:#8b98a9;border:1px dashed #30363d;border-radius:8px;padding:10px;margin-top:18px}
-.meta{font-size:11px;color:#6e7681;text-align:center;margin-top:22px}
+.hint{font-size:11.5px;color:#8b98a9;margin:4px 0}
+.hero-txt{color:#c9d1d9;font-size:13px;max-width:900px;margin:6px 0 14px;line-height:1.5}
+.b,.pb{display:inline-block;min-width:34px;text-align:center;padding:6px 2px;margin:2px;background:#238636;color:#fff;border-radius:8px;font-size:13px;font-weight:700}
+.pb{min-width:38px;font-size:16px;background:#1f6feb}
+.pbHi{background:#9e6a03}
+.b.sm{min-width:26px;font-size:11px;padding:4px 1px;background:#21262d;color:#c9d1d9}
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
 .sorteo{font-size:12px;margin:6px 0}
 .sorteo .nro{font-weight:700;color:#58a6ff}
 .sorteo .f{color:#8b98a9;margin-left:6px}
-@media(max-width:640px){.sug .mod{min-width:100%}}
+.play{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:14px}
+.play-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.play-tag{font-weight:700;color:#d29922;font-size:13px}
+.play-score{font-size:15px;color:#e6edf3}
+.play-score b{font-size:22px;color:#3fb950}
+.play-nums{display:flex;justify-content:center;gap:4px;margin:8px 0}
+.scorebar{height:8px;background:#21262d;border-radius:4px;overflow:hidden;margin:8px 0}
+.scorebar i{display:block;height:100%;background:linear-gradient(90deg,#1f6feb,#3fb950);width:0}
+.play-meta{font-size:11px;color:#8b98a9;margin:6px 0}
+.play-break{font-size:11px;margin-top:8px}
+.brow{display:flex;align-items:center;gap:8px;margin:3px 0}
+.brow span{width:120px;color:#8b98a9}
+.brow b{width:34px;text-align:right;color:#c9d1d9;font-weight:600}
+.bmini{flex:1;height:6px;background:#21262d;border-radius:3px;overflow:hidden}
+.bmini i{display:block;height:100%;background:#58a6ff}
+.modplay{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#161b22;border:1px solid #30363d;border-radius:12px;padding:10px 14px;margin:6px 0}
+.mtag{font-weight:700;color:#58a6ff;min-width:120px}
+.mscore{color:#3fb950;font-weight:700}
+.disc{font-size:12px;color:#8b98a9;border:1px dashed #30363d;border-radius:8px;padding:12px;margin-top:18px;line-height:1.6}
+.meta{font-size:11px;color:#6e7681;text-align:center;margin-top:22px}
+.tblwrap{overflow-x:auto}
+.confbadge{display:inline-block;padding:6px 16px;border-radius:20px;font-weight:800;font-size:14px;margin:6px 0}
+.confHi{background:#238636;color:#fff}
+.confMid{background:#9e6a03;color:#fff}
+.confLow{background:#a3542e;color:#fff}
+.bars{display:flex;gap:14px;flex-wrap:wrap}
+.bar-box{flex:1;min-width:250px}
+.bar-box span{font-size:12px;color:#8b98a9}
+canvas{max-width:100%}
+@media(max-width:640px){.play-nums{gap:2px}.pb{min-width:32px;font-size:14px}}
 </style></head><body>
-<h1>🎱 Quini 6 — Sistema de Estadísticas</h1>
-<p class='sub'>Histórico: <b>547 sorteos</b> (09/2020 → 09/2026) · Fuente: Lotería de Santa Fe (oficial), vía SoyTimbero · Último sorteo: <b>#3407</b> del <b>6/9/2026</b></p>
-<h2>Predicción jugada por jugada — próximos números</h2>
-<div class='card'>
-<p style='color:#8b98a9;margin-bottom:12px'>Próximo sorteo estimado: <b>#3408</b> — fecha aproximada <b>09/09/2026</b> (miércoles o sábado según calendario). Jugá con la combinación que más te cierre:</p>
-<h3>Tradicional</h3><div class='sug'>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>⚖️ Mixta (frec + atraso)</div><span class='b'>04</span> <span class='b'>12</span> <span class='b'>13</span> <span class='b'>27</span> <span class='b'>39</span> <span class='b'>41</span></div>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>⏳ Más atrasados</div><span class='b'>08</span> <span class='b'>13</span> <span class='b'>25</span> <span class='b'>32</span> <span class='b'>33</span> <span class='b'>41</span></div>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>🔥 Más frecuentes</div><span class='b'>04</span> <span class='b'>09</span> <span class='b'>17</span> <span class='b'>21</span> <span class='b'>38</span> <span class='b'>44</span></div>
-</div>
-<h3>Segunda</h3><div class='sug'>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>⚖️ Mixta (frec + atraso)</div><span class='b'>07</span> <span class='b'>09</span> <span class='b'>15</span> <span class='b'>21</span> <span class='b'>33</span> <span class='b'>42</span></div>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>⏳ Más atrasados</div><span class='b'>07</span> <span class='b'>09</span> <span class='b'>15</span> <span class='b'>21</span> <span class='b'>33</span> <span class='b'>42</span></div>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>🔥 Más frecuentes</div><span class='b'>08</span> <span class='b'>11</span> <span class='b'>24</span> <span class='b'>33</span> <span class='b'>38</span> <span class='b'>45</span></div>
-</div>
-<h3>Revancha</h3><div class='sug'>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>⚖️ Mixta (frec + atraso)</div><span class='b'>04</span> <span class='b'>13</span> <span class='b'>19</span> <span class='b'>27</span> <span class='b'>35</span> <span class='b'>42</span></div>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>⏳ Más atrasados</div><span class='b'>04</span> <span class='b'>13</span> <span class='b'>15</span> <span class='b'>27</span> <span class='b'>35</span> <span class='b'>42</span></div>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>🔥 Más frecuentes</div><span class='b'>08</span> <span class='b'>19</span> <span class='b'>20</span> <span class='b'>36</span> <span class='b'>37</span> <span class='b'>42</span></div>
-</div>
-<h3>Siempre Sale</h3><div class='sug'>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>⚖️ Mixta (frec + atraso)</div><span class='b'>08</span> <span class='b'>11</span> <span class='b'>12</span> <span class='b'>29</span> <span class='b'>34</span> <span class='b'>40</span></div>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>⏳ Más atrasados</div><span class='b'>08</span> <span class='b'>11</span> <span class='b'>12</span> <span class='b'>29</span> <span class='b'>31</span> <span class='b'>44</span></div>
-<div class='col' style='flex:1;min-width:230px'><div style='font-size:11px;color:#8b98a9;margin-bottom:4px'>🔥 Más frecuentes</div><span class='b'>04</span> <span class='b'>17</span> <span class='b'>22</span> <span class='b'>29</span> <span class='b'>35</span> <span class='b'>40</span></div>
-</div>
-<p class='disc' style='margin-top:12px'>Criterio: <b>Mixta</b> = mayor frecuencia + mayor atraso, penalizando números salidos en los últimos 60 sorteos y equilibrando decenas/unidades. <b>Más atrasados</b> = los que hace más sorteos no salen. <b>Más frecuentes</b> = los que más salieron históricamente. <b>Nada garantiza ganar</b> — cada combinación tiene la misma probabilidad: 1 en 9.366.819.</p></div>
-<h2>Últimos sorteos</h2><div class='card'><div class='grid4'>
-<div class='sorteo'>
-<span class='nro'>#3407</span><span class='f'>6/9/2026</span>
-<div>Tradicional: <span class='b'>19</span> <span class='b'>22</span> <span class='b'>10</span> <span class='b'>29</span> <span class='b'>36</span> <span class='b'>43</span></div>
-<div>Segunda: <span class='b'>45</span> <span class='b'>03</span> <span class='b'>28</span> <span class='b'>32</span> <span class='b'>24</span> <span class='b'>10</span></div>
-<div>Revancha: <span class='b'>20</span> <span class='b'>24</span> <span class='b'>00</span> <span class='b'>08</span> <span class='b'>23</span> <span class='b'>32</span></div>
-<div>Siempre Sale: <span class='b'>41</span> <span class='b'>30</span> <span class='b'>09</span> <span class='b'>01</span> <span class='b'>35</span> <span class='b'>21</span></div>
-</div>
-<div class='sorteo'>
-<span class='nro'>#3406</span><span class='f'>2/9/2026</span>
-<div>Tradicional: <span class='b'>02</span> <span class='b'>20</span> <span class='b'>16</span> <span class='b'>38</span> <span class='b'>22</span> <span class='b'>21</span></div>
-<div>Segunda: <span class='b'>23</span> <span class='b'>34</span> <span class='b'>12</span> <span class='b'>28</span> <span class='b'>26</span> <span class='b'>16</span></div>
-<div>Revancha: <span class='b'>37</span> <span class='b'>03</span> <span class='b'>32</span> <span class='b'>00</span> <span class='b'>41</span> <span class='b'>22</span></div>
-<div>Siempre Sale: <span class='b'>04</span> <span class='b'>03</span> <span class='b'>13</span> <span class='b'>42</span> <span class='b'>23</span> <span class='b'>00</span></div>
-</div>
-<div class='sorteo'>
-<span class='nro'>#3404</span><span class='f'>26/8/2026</span>
-<div>Tradicional: <span class='b'>07</span> <span class='b'>23</span> <span class='b'>45</span> <span class='b'>14</span> <span class='b'>22</span> <span class='b'>40</span></div>
-<div>Segunda: <span class='b'>17</span> <span class='b'>40</span> <span class='b'>38</span> <span class='b'>36</span> <span class='b'>11</span> <span class='b'>05</span></div>
-<div>Revancha: <span class='b'>05</span> <span class='b'>00</span> <span class='b'>10</span> <span class='b'>26</span> <span class='b'>20</span> <span class='b'>28</span></div>
-<div>Siempre Sale: <span class='b'>13</span> <span class='b'>36</span> <span class='b'>14</span> <span class='b'>06</span> <span class='b'>37</span> <span class='b'>21</span></div>
-</div>
-<div class='sorteo'>
-<span class='nro'>#3403</span><span class='f'>23/8/2026</span>
-<div>Tradicional: <span class='b'>23</span> <span class='b'>11</span> <span class='b'>16</span> <span class='b'>26</span> <span class='b'>05</span> <span class='b'>09</span></div>
-<div>Segunda: <span class='b'>39</span> <span class='b'>14</span> <span class='b'>10</span> <span class='b'>25</span> <span class='b'>30</span> <span class='b'>37</span></div>
-<div>Revancha: <span class='b'>10</span> <span class='b'>08</span> <span class='b'>22</span> <span class='b'>36</span> <span class='b'>30</span> <span class='b'>37</span></div>
-<div>Siempre Sale: <span class='b'>20</span> <span class='b'>28</span> <span class='b'>24</span> <span class='b'>23</span> <span class='b'>39</span> <span class='b'>35</span></div>
-</div>
-<div class='sorteo'>
-<span class='nro'>#3402</span><span class='f'>19/8/2026</span>
-<div>Tradicional: <span class='b'>00</span> <span class='b'>27</span> <span class='b'>42</span> <span class='b'>21</span> <span class='b'>24</span> <span class='b'>26</span></div>
-<div>Segunda: <span class='b'>27</span> <span class='b'>36</span> <span class='b'>19</span> <span class='b'>25</span> <span class='b'>24</span> <span class='b'>29</span></div>
-<div>Revancha: <span class='b'>39</span> <span class='b'>29</span> <span class='b'>02</span> <span class='b'>09</span> <span class='b'>36</span> <span class='b'>21</span></div>
-<div>Siempre Sale: <span class='b'>20</span> <span class='b'>01</span> <span class='b'>04</span> <span class='b'>37</span> <span class='b'>05</span> <span class='b'>43</span></div>
-</div>
-<div class='sorteo'>
-<span class='nro'>#3401</span><span class='f'>16/8/2026</span>
-<div>Tradicional: <span class='b'>10</span> <span class='b'>17</span> <span class='b'>01</span> <span class='b'>25</span> <span class='b'>02</span> <span class='b'>06</span></div>
-<div>Segunda: <span class='b'>12</span> <span class='b'>10</span> <span class='b'>03</span> <span class='b'>26</span> <span class='b'>33</span> <span class='b'>16</span></div>
-<div>Revancha: <span class='b'>29</span> <span class='b'>24</span> <span class='b'>12</span> <span class='b'>02</span> <span class='b'>40</span> <span class='b'>14</span></div>
-<div>Siempre Sale: <span class='b'>07</span> <span class='b'>21</span> <span class='b'>32</span> <span class='b'>37</span> <span class='b'>30</span> <span class='b'>27</span></div>
-</div>
-<div class='sorteo'>
-<span class='nro'>#3400</span><span class='f'>12/8/2026</span>
-<div>Tradicional: <span class='b'>18</span> <span class='b'>09</span> <span class='b'>15</span> <span class='b'>28</span> <span class='b'>31</span> <span class='b'>02</span></div>
-<div>Segunda: <span class='b'>43</span> <span class='b'>28</span> <span class='b'>34</span> <span class='b'>44</span> <span class='b'>02</span> <span class='b'>18</span></div>
-<div>Revancha: <span class='b'>37</span> <span class='b'>16</span> <span class='b'>12</span> <span class='b'>30</span> <span class='b'>43</span> <span class='b'>29</span></div>
-<div>Siempre Sale: <span class='b'>32</span> <span class='b'>09</span> <span class='b'>10</span> <span class='b'>06</span> <span class='b'>35</span> <span class='b'>02</span></div>
-</div>
-<div class='sorteo'>
-<span class='nro'>#3399</span><span class='f'>9/8/2026</span>
-<div>Tradicional: <span class='b'>30</span> <span class='b'>31</span> <span class='b'>44</span> <span class='b'>25</span> <span class='b'>24</span> <span class='b'>23</span></div>
-<div>Segunda: <span class='b'>20</span> <span class='b'>08</span> <span class='b'>04</span> <span class='b'>24</span> <span class='b'>16</span> <span class='b'>36</span></div>
-<div>Revancha: <span class='b'>24</span> <span class='b'>22</span> <span class='b'>03</span> <span class='b'>25</span> <span class='b'>42</span> <span class='b'>07</span></div>
-<div>Siempre Sale: <span class='b'>33</span> <span class='b'>13</span> <span class='b'>23</span> <span class='b'>21</span> <span class='b'>26</span> <span class='b'>32</span></div>
-</div>
-</div></div>
-<h2>Frecuencias por modalidad (top y cola)</h2>
-<h3>Tradicional — más frecuentes</h3><div class='card'><table><tr><th></th><th>N°</th><th>Veces</th><th>Distribución</th></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>17</td><td>89</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>09</td><td>89</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>04</td><td>86</td><td><span class='bar'><i style='width:97%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>16</td><td>85</td><td><span class='bar'><i style='width:96%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>05</td><td>84</td><td><span class='bar'><i style='width:94%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>23</td><td>81</td><td><span class='bar'><i style='width:91%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>21</td><td>81</td><td><span class='bar'><i style='width:91%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>12</td><td>81</td><td><span class='bar'><i style='width:91%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>02</td><td>80</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>00</td><td>78</td><td><span class='bar'><i style='width:88%'></i></span></td></tr>
-</table></div>
-<h3>Tradicional — más fríos (menos salidos)</h3><div class='card'><div style='display:flex;flex-wrap:wrap;gap:4px'>
-<span class='b cold' title='52 veces'>35</span>
-<span class='b cold' title='56 veces'>11</span>
-<span class='b cold' title='58 veces'>30</span>
-<span class='b cold' title='59 veces'>33</span>
-<span class='b cold' title='61 veces'>28</span>
-<span class='b cold' title='61 veces'>37</span>
-<span class='b cold' title='62 veces'>20</span>
-<span class='b cold' title='62 veces'>32</span>
-<span class='b cold' title='63 veces'>03</span>
-<span class='b cold' title='63 veces'>40</span>
-</div></div>
-<h3>Segunda — más frecuentes</h3><div class='card'><table><tr><th></th><th>N°</th><th>Veces</th><th>Distribución</th></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>24</td><td>92</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>33</td><td>88</td><td><span class='bar'><i style='width:96%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>11</td><td>88</td><td><span class='bar'><i style='width:96%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>38</td><td>85</td><td><span class='bar'><i style='width:92%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>08</td><td>84</td><td><span class='bar'><i style='width:91%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>22</td><td>83</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>37</td><td>79</td><td><span class='bar'><i style='width:86%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>16</td><td>79</td><td><span class='bar'><i style='width:86%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>45</td><td>78</td><td><span class='bar'><i style='width:85%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>35</td><td>78</td><td><span class='bar'><i style='width:85%'></i></span></td></tr>
-</table></div>
-<h3>Segunda — más fríos (menos salidos)</h3><div class='card'><div style='display:flex;flex-wrap:wrap;gap:4px'>
-<span class='b cold' title='52 veces'>05</span>
-<span class='b cold' title='56 veces'>43</span>
-<span class='b cold' title='58 veces'>10</span>
-<span class='b cold' title='58 veces'>28</span>
-<span class='b cold' title='61 veces'>07</span>
-<span class='b cold' title='61 veces'>34</span>
-<span class='b cold' title='62 veces'>29</span>
-<span class='b cold' title='63 veces'>23</span>
-<span class='b cold' title='63 veces'>27</span>
-<span class='b cold' title='63 veces'>36</span>
-</div></div>
-<h3>Revancha — más frecuentes</h3><div class='card'><table><tr><th></th><th>N°</th><th>Veces</th><th>Distribución</th></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>19</td><td>87</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>08</td><td>87</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>37</td><td>86</td><td><span class='bar'><i style='width:99%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>36</td><td>86</td><td><span class='bar'><i style='width:99%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>34</td><td>83</td><td><span class='bar'><i style='width:95%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>17</td><td>82</td><td><span class='bar'><i style='width:94%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>16</td><td>81</td><td><span class='bar'><i style='width:93%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>42</td><td>80</td><td><span class='bar'><i style='width:92%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>40</td><td>78</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>31</td><td>78</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
-</table></div>
-<h3>Revancha — más fríos (menos salidos)</h3><div class='card'><div style='display:flex;flex-wrap:wrap;gap:4px'>
-<span class='b cold' title='51 veces'>39</span>
-<span class='b cold' title='55 veces'>23</span>
-<span class='b cold' title='55 veces'>26</span>
-<span class='b cold' title='55 veces'>30</span>
-<span class='b cold' title='57 veces'>05</span>
-<span class='b cold' title='59 veces'>28</span>
-<span class='b cold' title='61 veces'>00</span>
-<span class='b cold' title='63 veces'>09</span>
-<span class='b cold' title='63 veces'>45</span>
-<span class='b cold' title='64 veces'>06</span>
-</div></div>
-<h3>Siempre Sale — más frecuentes</h3><div class='card'><table><tr><th></th><th>N°</th><th>Veces</th><th>Distribución</th></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>40</td><td>89</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>35</td><td>89</td><td><span class='bar'><i style='width:100%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>29</td><td>85</td><td><span class='bar'><i style='width:96%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>36</td><td>83</td><td><span class='bar'><i style='width:93%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>22</td><td>83</td><td><span class='bar'><i style='width:93%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>17</td><td>82</td><td><span class='bar'><i style='width:92%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>21</td><td>80</td><td><span class='bar'><i style='width:90%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>23</td><td>79</td><td><span class='bar'><i style='width:89%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>10</td><td>79</td><td><span class='bar'><i style='width:89%'></i></span></td></tr>
-<tr><td style='color:#238636'>🔥</td><td style='font-weight:700'>14</td><td>76</td><td><span class='bar'><i style='width:85%'></i></span></td></tr>
-</table></div>
-<h3>Siempre Sale — más fríos (menos salidos)</h3><div class='card'><div style='display:flex;flex-wrap:wrap;gap:4px'>
-<span class='b cold' title='55 veces'>39</span>
-<span class='b cold' title='56 veces'>43</span>
-<span class='b cold' title='60 veces'>05</span>
-<span class='b cold' title='62 veces'>08</span>
-<span class='b cold' title='63 veces'>18</span>
-<span class='b cold' title='63 veces'>42</span>
-<span class='b cold' title='63 veces'>44</span>
-<span class='b cold' title='66 veces'>03</span>
-<span class='b cold' title='66 veces'>16</span>
-<span class='b cold' title='66 veces'>31</span>
-</div></div>
-<h2>Atraso actual por modalidad (números hace más sorteos que no salen)</h2><div class='row'>
-<div class='col card'><h3>Tradicional</h3><table><tr><th>N°</th><th>Sorteos sin salir</th></tr>
-<tr><td>13</td><td>24</td></tr>
-<tr><td>32</td><td>17</td></tr>
-<tr><td>33</td><td>17</td></tr>
-<tr><td>39</td><td>17</td></tr>
-<tr><td>41</td><td>12</td></tr>
-<tr><td>08</td><td>11</td></tr>
-<tr><td>12</td><td>11</td></tr>
-<tr><td>34</td><td>10</td></tr>
-</table></div>
-<div class='col card'><h3>Segunda</h3><table><tr><th>N°</th><th>Sorteos sin salir</th></tr>
-<tr><td>09</td><td>23</td></tr>
-<tr><td>15</td><td>23</td></tr>
-<tr><td>07</td><td>18</td></tr>
-<tr><td>21</td><td>13</td></tr>
-<tr><td>42</td><td>12</td></tr>
-<tr><td>00</td><td>10</td></tr>
-<tr><td>01</td><td>10</td></tr>
-<tr><td>06</td><td>10</td></tr>
-</table></div>
-<div class='col card'><h3>Revancha</h3><table><tr><th>N°</th><th>Sorteos sin salir</th></tr>
-<tr><td>13</td><td>22</td></tr>
-<tr><td>27</td><td>20</td></tr>
-<tr><td>35</td><td>19</td></tr>
-<tr><td>15</td><td>16</td></tr>
-<tr><td>19</td><td>16</td></tr>
-<tr><td>34</td><td>14</td></tr>
-<tr><td>04</td><td>13</td></tr>
-<tr><td>17</td><td>13</td></tr>
-</table></div>
-<div class='col card'><h3>Siempre Sale</h3><table><tr><th>N°</th><th>Sorteos sin salir</th></tr>
-<tr><td>12</td><td>23</td></tr>
-<tr><td>11</td><td>22</td></tr>
-<tr><td>08</td><td>21</td></tr>
-<tr><td>22</td><td>15</td></tr>
-<tr><td>31</td><td>14</td></tr>
-<tr><td>34</td><td>14</td></tr>
-<tr><td>19</td><td>13</td></tr>
-<tr><td>29</td><td>13</td></tr>
-</table></div>
-</div>
-<h2>Pares y cuaternas más repetidas (Tradicional)</h2><div class='row'>
-<div class='col card'><h3>Top 15 pares</h3><table><tr><th>Par</th><th>Veces</th></tr>
-<tr><td>04 · 17</td><td>19</td></tr>
-<tr><td>05 · 09</td><td>18</td></tr>
-<tr><td>08 · 21</td><td>18</td></tr>
-<tr><td>00 · 42</td><td>17</td></tr>
-<tr><td>01 · 19</td><td>17</td></tr>
-<tr><td>09 · 12</td><td>16</td></tr>
-<tr><td>04 · 27</td><td>16</td></tr>
-<tr><td>16 · 21</td><td>16</td></tr>
-<tr><td>05 · 31</td><td>16</td></tr>
-<tr><td>04 · 15</td><td>16</td></tr>
-<tr><td>02 · 38</td><td>15</td></tr>
-<tr><td>00 · 41</td><td>15</td></tr>
-<tr><td>04 · 43</td><td>15</td></tr>
-<tr><td>00 · 13</td><td>15</td></tr>
-<tr><td>23 · 43</td><td>15</td></tr>
-</table></div>
-<div class='col card'><h3>Top 10 cuaternas</h3><table><tr><th>Cuaterna</th><th>Veces</th></tr>
-<tr><td>15 · 21 · 23 · 27</td><td>3</td></tr>
-<tr><td>04 · 36 · 37 · 40</td><td>3</td></tr>
-<tr><td>00 · 02 · 09 · 14</td><td>2</td></tr>
-<tr><td>03 · 22 · 36 · 38</td><td>2</td></tr>
-<tr><td>00 · 09 · 12 · 32</td><td>2</td></tr>
-<tr><td>00 · 08 · 13 · 14</td><td>2</td></tr>
-<tr><td>00 · 13 · 14 · 25</td><td>2</td></tr>
-<tr><td>08 · 13 · 14 · 25</td><td>2</td></tr>
-<tr><td>08 · 13 · 14 · 34</td><td>2</td></tr>
-<tr><td>08 · 13 · 25 · 34</td><td>2</td></tr>
-</table></div>
-</div>
-<div class='disc'>⚠️ <b>Aviso honesto:</b> la lotería es azar puro: cada combinación de 6 números entre 45 tiene exactamente <b>1/9.366.819</b> de chances por sorteo, sin importar el historial. Estas estadísticas sirven para <i>elegir con un criterio</i> (evitar combinaciones famosas que se reparten el pozo y en su lugar elegir números poco jugados), pero <b>no aumentan la probabilidad de ganar</b>. Jugá con responsabilidad, +18.</div>
-<div class='meta'>Generado por YARVIS · 13/09/2026 01:03 · 547 sorteos analizados</div>
+<h1>🎱 Quini 6 — Analizador Estadístico</h1>
+<p class="sub" id="meta"></p>
+<div id="hero"></div>
+<div class="row">
+<div class="col" id="playOpt"></div><div class="col" id="playEq"></div></div>
+<div class="row">
+<div class="col" id="playAnti"></div><div class="col" id="playDiv"></div></div>
+<h2>Jugada óptima por modalidad</h2><div class="card" id="modPlays"></div>
+<h2>Confianza del modelo</h2><div class="card" id="confPanel"><p class="hint">Calculando…</p></div>
+<h2 id="btTitle">Backtest — el algoritmo puesto a prueba</h2>
+<div class="card"><p id="btStatus" class="hint">…</p><div id="btReport"></div><div class="tblwrap"><table id="btTable"></table></div><div id="btBars"></div></div>
+<h2>Últimos sorteos</h2><div class="card"><div class="grid4" id="lastDraws"></div></div>
+<h2>Frecuencia esperada (observado vs. matemático)</h2><div class="row">
+<div class="col" id="freqExp"></div><div class="col"><div class="card" id="chartDev"></div></div></div>
+<div id="multiWin"></div>
+<div class="row"><div class="col" id="atraso"></div><div class="col" id="consec"></div></div>
+<h2>Distribución histórica (Tradicional)</h2><div class="row">
+<div class="col card" id="distDec"></div><div class="col card" id="distPar"></div><div class="col card" id="distSum"></div><div class="col card" id="pieOpt"></div></div>
+<h2>Popularidad humana</h2><div class="disc">El modelo penaliza <b>combinaciones que probablemente juegue mucha gente</b>: muchos números 1-31 (fechas), secuencias (01-02-03), patrones simétricos, múltiplos obvios y terminaciones repetidas. Favorece números &gt;31 y combinaciones poco obvias.<br><b>Esto NO aumenta la probabilidad de acertar.</b> Si una combinación gana, apuntar a jugadas poco populares podría reducir la posibilidad de <b>compartir el premio</b> con otros jugadores.</div>
+<h2>¿Cómo funciona?</h2>
+<div class="disc">El sistema analiza el histórico disponible y utiliza múltiples métricas para <b>ordenar combinaciones</b>: frecuencia histórica, tendencia multiventana (15/30/75/150/300 sorteos), desviación vs. esperado, atraso (variable secundaria), distribución por decenas, paridad, rango, suma total, consecutivos según su frecuencia histórica, pares típicos, anti-patrones y popularidad humana estimada.<br><br>
+Pesos por defecto del score (configurables): Frecuencia 20 · Tendencia 12 · Anti-patrones 12 · Popularidad 13 · Distribución 10 · Suma 8 · Pares 8 · Paridad 6 · Rango 6 · Consecutivos 5.<br><br>
+<b>Esto no permite predecir un sorteo aleatorio ni modifica la probabilidad matemática de cada combinación.</b> El objetivo es ayudarte a elegir con un criterio reproducible y evitar patrones humanos demasiado comunes. 70% de los datos se usan para modelar y el backtest valida sobre el resto (y sobre todo el histórico en modo walk-forward, nunca usando sortear futuros).</div>
+<h2>Validación de datos</h2><div class="disc" id="validation"></div>
+<div class="disc">⚠️ <b>Aviso honesto:</b> cada combinación de 6 números entre 46 (bolillas 00 a 45) tiene exactamente <b>1 en 9.366.819</b> de chances por sorteo, sin importar el historial. Las estadísticas sirven para elegir con un criterio, no para aumentar la probabilidad de ganar. Jugá con responsabilidad, +18.</div>
+<div class="meta">Generado por YARVIS · 13/09/2026 01:11 · 547 sorteos analizados · Página 100% estática, sin backend</div>
+<script>
+// ============ MOTOR ESTADISTICO QUINI 6 ============
+(function () {
+  'use strict';
+  // ---------- datos ----------
+  const DRAWS = [[2788, "9/9/2020", [10, 11, 12, 14, 17, 44], [1, 4, 9, 19, 35, 38], [6, 12, 14, 27, 32, 34], [8, 17, 18, 22, 27, 45]], [2789, "13/9/2020", [0, 2, 5, 9, 14, 24], [14, 16, 17, 21, 31, 35], [1, 11, 20, 26, 31, 41], [7, 8, 14, 20, 22, 44]], [2790, "16/9/2020", [2, 3, 22, 28, 36, 38], [8, 9, 17, 31, 33, 42], [7, 10, 13, 16, 19, 28], [9, 11, 14, 26, 37, 38]], [2791, "20/9/2020", [0, 5, 9, 12, 32, 41], [17, 18, 19, 36, 38, 42], [3, 9, 16, 17, 20, 27], [1, 8, 17, 35, 40, 44]], [2792, "23/9/2020", [3, 4, 9, 22, 36, 38], [0, 10, 16, 31, 34, 40], [0, 5, 12, 18, 19, 40], [3, 4, 22, 25, 26, 35]], [2793, "27/9/2020", [4, 11, 13, 27, 31, 43], [22, 27, 33, 34, 36, 43], [5, 8, 10, 29, 35, 36], [3, 6, 14, 26, 29, 38]], [2795, "4/10/2020", [6, 7, 10, 14, 39, 45], [0, 2, 18, 21, 33, 43], [0, 9, 12, 20, 23, 25], [1, 23, 25, 28, 33, 34]], [2796, "7/10/2020", [0, 8, 13, 14, 25, 34], [8, 9, 11, 17, 18, 37], [2, 5, 10, 23, 25, 34], [10, 11, 12, 15, 23, 42]], [2797, "11/10/2020", [7, 10, 12, 14, 23, 43], [34, 35, 37, 39, 41, 42], [9, 13, 29, 31, 39, 43], [4, 15, 26, 27, 33, 34]], [2798, "14/10/2020", [8, 19, 23, 28, 32, 33], [10, 12, 15, 23, 31, 41], [10, 19, 20, 27, 40, 44], [1, 7, 19, 20, 23, 43]], [2799, "18/10/2020", [3, 16, 23, 28, 33, 44], [3, 4, 11, 24, 35, 38], [4, 18, 31, 33, 37, 40], [10, 20, 37, 40, 44, 45]], [2800, "21/10/2020", [11, 18, 32, 33, 36, 39], [16, 19, 34, 40, 41, 44], [1, 10, 24, 28, 29, 43], [4, 10, 11, 14, 21, 40]], [2801, "25/10/2020", [1, 3, 10, 16, 33, 40], [3, 4, 10, 28, 35, 36], [6, 16, 18, 32, 41, 42], [7, 14, 15, 19, 20, 22]], [2803, "1/11/2020", [7, 12, 28, 31, 33, 39], [4, 6, 11, 12, 20, 32], [17, 26, 28, 33, 38, 45], [0, 1, 3, 7, 16, 35]], [2804, "4/11/2020", [9, 12, 26, 27, 36, 37], [16, 20, 24, 27, 38, 40], [11, 18, 19, 25, 27, 28], [1, 9, 15, 30, 32, 43]], [2805, "8/11/2020", [8, 13, 16, 21, 36, 42], [2, 3, 6, 8, 23, 30], [24, 26, 28, 32, 33, 36], [0, 3, 9, 11, 12, 15]], [2806, "11/11/2020", [5, 6, 9, 22, 27, 38], [11, 19, 21, 24, 25, 41], [3, 9, 23, 36, 41, 45], [2, 4, 7, 14, 32, 39]], [2807, "15/11/2020", [18, 22, 27, 34, 35, 38], [9, 20, 30, 31, 35, 39], [4, 7, 12, 19, 24, 45], [12, 13, 14, 18, 19, 21]], [2808, "18/11/2020", [3, 17, 18, 20, 27, 28], [8, 13, 19, 25, 29, 45], [5, 7, 15, 37, 42, 43], [4, 11, 13, 21, 39, 44]], [2809, "22/11/2020", [8, 10, 19, 23, 31, 45], [7, 10, 13, 38, 41, 43], [18, 19, 21, 22, 24, 37], [9, 21, 32, 36, 40, 42]], [2810, "25/11/2020", [5, 12, 16, 25, 33, 39], [9, 17, 19, 34, 36, 45], [2, 4, 5, 7, 19, 25], [7, 8, 21, 25, 30, 33]], [2812, "2/12/2020", [5, 17, 19, 31, 38, 45], [3, 5, 24, 33, 34, 41], [9, 11, 16, 32, 33, 39], [2, 3, 19, 25, 29, 35]], [2813, "6/12/2020", [6, 15, 20, 27, 37, 42], [6, 14, 18, 28, 33, 43], [6, 25, 30, 38, 41, 44], [13, 22, 26, 37, 40, 45]], [2814, "9/12/2020", [4, 17, 22, 30, 31, 41], [22, 27, 33, 39, 40, 42], [6, 9, 14, 15, 19, 30], [2, 14, 15, 24, 26, 45]], [2815, "13/12/2020", [4, 5, 13, 23, 33, 43], [8, 9, 11, 19, 35, 37], [4, 23, 27, 29, 35, 42], [6, 8, 16, 23, 27, 38]], [2816, "16/12/2020", [9, 10, 27, 29, 30, 41], [1, 6, 7, 25, 35, 42], [7, 15, 28, 32, 40, 45], [3, 4, 6, 10, 17, 42]], [2818, "20/12/2020", [3, 22, 23, 24, 29, 33], [4, 12, 19, 24, 27, 43], [2, 7, 10, 21, 31, 34], [0, 1, 8, 26, 32, 40]], [2819, "27/12/2020", [8, 9, 19, 20, 22, 30], [0, 2, 32, 35, 38, 40], [12, 17, 23, 26, 37, 38], [12, 16, 23, 27, 32, 33]], [2821, "3/1/2021", [4, 8, 13, 21, 37, 38], [0, 2, 20, 25, 34, 41], [8, 27, 28, 31, 35, 40], [3, 13, 23, 24, 42, 44]], [2822, "6/1/2021", [2, 4, 14, 25, 34, 44], [17, 28, 30, 32, 43, 44], [3, 6, 13, 18, 21, 44], [0, 12, 18, 22, 26, 27]], [2823, "10/1/2021", [2, 8, 13, 21, 34, 43], [0, 2, 13, 15, 33, 44], [2, 11, 25, 34, 37, 44], [13, 17, 25, 28, 30, 38]], [2824, "13/1/2021", [5, 14, 31, 33, 35, 43], [12, 20, 22, 31, 33, 45], [7, 8, 13, 15, 30, 41], [7, 11, 16, 33, 36, 40]], [2825, "17/1/2021", [4, 12, 28, 29, 32, 45], [2, 6, 10, 19, 37, 39], [7, 12, 18, 23, 31, 32], [4, 20, 22, 32, 36, 44]], [2826, "20/1/2021", [10, 17, 21, 32, 38, 43], [0, 12, 29, 33, 38, 39], [3, 16, 25, 27, 31, 37], [9, 19, 23, 27, 32, 35]], [2827, "24/1/2021", [10, 15, 31, 41, 44, 45], [7, 21, 35, 38, 41, 42], [2, 21, 25, 30, 36, 41], [3, 29, 31, 39, 40, 41]], [2828, "27/1/2021", [2, 15, 18, 22, 38, 43], [0, 10, 11, 13, 21, 40], [16, 19, 25, 37, 40, 42], [3, 7, 15, 21, 35, 40]], [2830, "3/2/2021", [0, 10, 16, 21, 23, 41], [2, 3, 12, 19, 20, 37], [15, 17, 19, 22, 25, 35], [2, 13, 20, 21, 22, 43]], [2831, "7/2/2021", [0, 3, 16, 31, 34, 42], [13, 15, 19, 34, 36, 38], [14, 19, 28, 36, 40, 42], [17, 18, 22, 28, 33, 34]], [2832, "10/2/2021", [2, 7, 22, 28, 34, 43], [2, 10, 11, 19, 22, 42], [0, 3, 20, 31, 34, 37], [2, 17, 21, 22, 30, 45]], [2833, "14/2/2021", [2, 7, 13, 17, 23, 44], [4, 6, 19, 20, 44, 45], [2, 9, 11, 15, 33, 34], [0, 17, 22, 23, 35, 39]], [2834, "17/2/2021", [1, 5, 18, 20, 22, 42], [12, 21, 23, 28, 37, 44], [5, 7, 12, 26, 37, 40], [6, 10, 11, 18, 19, 45]], [2835, "21/2/2021", [0, 6, 14, 19, 34, 42], [4, 10, 18, 24, 34, 45], [23, 24, 31, 32, 37, 38], [4, 10, 18, 29, 40, 41]], [2836, "24/2/2021", [5, 8, 9, 21, 24, 45], [4, 7, 18, 21, 26, 42], [7, 9, 19, 25, 28, 30], [16, 21, 22, 30, 31, 44]], [2838, "3/3/2021", [9, 10, 14, 30, 42, 44], [9, 11, 16, 18, 32, 45], [17, 19, 31, 42, 44, 45], [7, 14, 21, 26, 34, 38]], [2839, "7/3/2021", [1, 4, 16, 17, 27, 38], [30, 33, 34, 36, 37, 44], [2, 13, 17, 24, 29, 45], [3, 21, 23, 29, 39, 45]], [2840, "10/3/2021", [4, 14, 19, 27, 32, 45], [3, 4, 15, 16, 30, 39], [4, 5, 6, 31, 38, 43], [11, 19, 30, 31, 32, 45]], [2841, "14/3/2021", [1, 4, 7, 12, 13, 22], [3, 11, 36, 37, 41, 42], [0, 1, 3, 8, 34, 36], [8, 10, 14, 24, 25, 31]], [2842, "17/3/2021", [5, 20, 26, 28, 29, 34], [8, 9, 11, 13, 24, 29], [6, 18, 20, 26, 31, 44], [4, 16, 20, 23, 26, 31]], [2843, "21/3/2021", [6, 8, 12, 17, 22, 36], [6, 22, 25, 27, 31, 40], [10, 11, 16, 22, 30, 41], [17, 24, 28, 32, 36, 39]], [2844, "24/3/2021", [7, 14, 15, 17, 39, 40], [17, 20, 24, 36, 39, 45], [0, 1, 2, 19, 23, 34], [0, 2, 16, 22, 37, 43]], [2845, "28/3/2021", [18, 23, 26, 30, 34, 37], [9, 10, 27, 28, 36, 44], [2, 17, 20, 25, 33, 42], [9, 25, 35, 39, 42, 45]], [2847, "4/4/2021", [9, 12, 18, 25, 32, 34], [0, 24, 30, 35, 41, 43], [0, 6, 15, 18, 26, 38], [11, 14, 17, 25, 28, 31]], [2848, "7/4/2021", [4, 8, 9, 26, 43, 44], [3, 4, 8, 22, 29, 35], [0, 2, 4, 14, 40, 42], [4, 15, 17, 21, 26, 32]], [2849, "11/4/2021", [5, 20, 28, 31, 39, 41], [7, 16, 33, 40, 41, 44], [1, 10, 15, 24, 34, 37], [8, 10, 12, 16, 27, 36]], [2850, "14/4/2021", [13, 18, 19, 25, 42, 44], [0, 3, 10, 21, 23, 29], [13, 15, 17, 29, 32, 37], [0, 6, 11, 25, 28, 41]], [2851, "18/4/2021", [1, 8, 14, 40, 43, 45], [17, 19, 28, 29, 30, 39], [14, 19, 21, 22, 39, 40], [3, 9, 17, 21, 28, 44]], [2852, "21/4/2021", [17, 19, 23, 32, 43, 45], [0, 9, 11, 13, 19, 40], [3, 5, 14, 18, 22, 44], [9, 13, 16, 30, 34, 35]], [2853, "25/4/2021", [4, 15, 16, 31, 44, 45], [6, 9, 10, 12, 19, 45], [1, 5, 13, 18, 27, 44], [10, 28, 33, 35, 37, 38]], [2855, "2/5/2021", [11, 13, 17, 21, 30, 33], [7, 13, 17, 37, 39, 45], [6, 7, 17, 21, 24, 25], [11, 16, 20, 31, 36, 44]], [2856, "5/5/2021", [6, 9, 15, 32, 36, 39], [1, 5, 7, 31, 41, 42], [10, 19, 21, 32, 35, 37], [8, 18, 20, 26, 29, 33]], [2857, "9/5/2021", [4, 9, 13, 21, 22, 43], [16, 19, 23, 36, 40, 45], [17, 18, 21, 29, 31, 41], [2, 10, 17, 18, 30, 37]], [2858, "12/5/2021", [1, 12, 22, 24, 32, 37], [2, 4, 12, 20, 31, 43], [0, 11, 13, 17, 18, 35], [22, 23, 25, 28, 32, 43]], [2859, "16/5/2021", [0, 3, 18, 19, 20, 23], [12, 21, 26, 27, 35, 42], [14, 24, 31, 32, 37, 42], [2, 6, 26, 28, 41, 43]], [2860, "20/5/2021", [0, 10, 19, 23, 29, 43], [8, 19, 24, 26, 37, 45], [1, 2, 3, 18, 19, 31], [2, 3, 14, 24, 34, 41]], [2862, "3/6/2021", [17, 23, 32, 37, 39, 45], [1, 14, 16, 25, 29, 31], [3, 16, 20, 29, 33, 37], [0, 19, 26, 31, 32, 38]], [2863, "6/6/2021", [0, 4, 13, 17, 35, 41], [7, 8, 11, 13, 23, 41], [2, 7, 11, 20, 22, 45], [4, 18, 25, 32, 34, 44]], [2864, "9/6/2021", [6, 11, 13, 19, 20, 30], [0, 3, 8, 10, 42, 43], [0, 1, 4, 7, 8, 32], [0, 3, 5, 9, 17, 18]], [2865, "13/6/2021", [5, 11, 14, 16, 31, 36], [15, 21, 27, 30, 41, 43], [2, 3, 9, 15, 37, 45], [9, 10, 21, 24, 38, 44]], [2866, "16/6/2021", [3, 6, 29, 32, 35, 42], [17, 18, 26, 31, 38, 39], [6, 8, 14, 17, 23, 28], [5, 19, 21, 23, 35, 41]], [2867, "20/6/2021", [5, 11, 27, 31, 36, 45], [4, 11, 15, 28, 29, 41], [3, 6, 13, 14, 25, 31], [2, 9, 23, 34, 35, 42]], [2868, "23/6/2021", [3, 24, 25, 35, 40, 43], [9, 10, 22, 25, 43, 44], [12, 17, 19, 26, 34, 41], [17, 18, 33, 34, 36, 38]], [2869, "27/6/2021", [13, 18, 23, 26, 36, 37], [2, 17, 30, 35, 42, 44], [1, 2, 6, 12, 25, 40], [1, 13, 16, 22, 24, 30]], [2871, "4/7/2021", [8, 10, 13, 17, 34, 44], [7, 25, 32, 36, 40, 42], [2, 20, 33, 36, 42, 45], [8, 10, 28, 35, 39, 41]], [2872, "7/7/2021", [9, 16, 17, 19, 26, 36], [6, 13, 19, 28, 41, 44], [5, 8, 11, 15, 20, 21], [0, 1, 9, 19, 21, 24]], [2873, "11/7/2021", [4, 20, 23, 29, 30, 45], [7, 16, 31, 35, 36, 43], [10, 17, 21, 23, 37, 45], [25, 33, 34, 37, 39, 42]], [2874, "14/7/2021", [1, 9, 10, 13, 23, 39], [5, 8, 12, 22, 26, 45], [1, 4, 5, 10, 33, 45], [2, 3, 14, 15, 33, 37]], [2875, "18/7/2021", [11, 12, 13, 24, 27, 38], [0, 6, 8, 15, 18, 36], [0, 10, 13, 28, 30, 34], [9, 12, 17, 28, 37, 40]], [2876, "21/7/2021", [1, 6, 9, 36, 38, 41], [6, 8, 9, 15, 16, 45], [10, 11, 14, 23, 31, 34], [9, 20, 22, 23, 30, 37]], [2877, "25/7/2021", [5, 11, 16, 19, 25, 41], [2, 8, 15, 20, 25, 26], [6, 7, 17, 30, 35, 44], [11, 15, 22, 25, 30, 40]], [2879, "1/8/2021", [11, 22, 27, 32, 42, 44], [2, 4, 8, 22, 30, 35], [4, 10, 22, 27, 28, 29], [3, 21, 24, 29, 33, 40]], [2880, "4/8/2021", [1, 16, 17, 41, 43, 44], [7, 12, 17, 23, 24, 37], [6, 20, 21, 25, 28, 29], [7, 26, 30, 36, 40, 44]], [2881, "8/8/2021", [0, 2, 7, 27, 29, 42], [2, 9, 31, 37, 40, 42], [1, 8, 18, 21, 34, 45], [7, 9, 13, 16, 35, 41]], [2882, "11/8/2021", [3, 8, 10, 25, 29, 31], [0, 1, 6, 21, 24, 27], [10, 14, 21, 22, 36, 41], [11, 19, 24, 28, 31, 32]], [2883, "15/8/2021", [0, 5, 16, 22, 26, 38], [12, 15, 24, 32, 33, 45], [0, 25, 27, 32, 35, 43], [10, 13, 18, 32, 35, 45]], [2884, "18/8/2021", [3, 6, 23, 24, 25, 42], [4, 5, 15, 23, 32, 42], [15, 19, 27, 30, 36, 41], [10, 14, 34, 35, 38, 44]], [2885, "22/8/2021", [10, 12, 14, 31, 32, 34], [16, 25, 32, 38, 39, 45], [0, 13, 22, 26, 32, 45], [7, 15, 16, 20, 30, 42]], [2886, "25/8/2021", [0, 12, 20, 37, 42, 45], [16, 23, 33, 38, 39, 45], [12, 16, 22, 35, 36, 40], [15, 16, 19, 24, 30, 36]], [2888, "1/9/2021", [3, 21, 24, 26, 35, 38], [8, 9, 11, 12, 23, 24], [6, 9, 19, 26, 29, 34], [1, 7, 29, 31, 40, 41]], [2889, "5/9/2021", [10, 15, 20, 25, 30, 38], [8, 9, 24, 34, 41, 44], [1, 2, 3, 6, 22, 44], [1, 24, 27, 31, 40, 45]], [2890, "8/9/2021", [1, 3, 16, 18, 20, 40], [9, 11, 15, 21, 37, 45], [1, 4, 6, 22, 35, 36], [0, 6, 28, 32, 36, 42]], [2891, "12/9/2021", [8, 12, 14, 16, 26, 38], [3, 20, 21, 25, 28, 45], [3, 15, 19, 23, 35, 40], [8, 22, 29, 34, 35, 37]], [2892, "15/9/2021", [2, 11, 12, 19, 23, 35], [1, 8, 18, 25, 36, 41], [0, 1, 5, 18, 35, 41], [0, 17, 20, 29, 36, 38]], [2893, "19/9/2021", [5, 14, 21, 22, 38, 44], [1, 17, 18, 21, 38, 44], [17, 20, 32, 34, 44, 45], [14, 23, 29, 36, 41, 45]], [2894, "22/9/2021", [8, 9, 18, 19, 21, 23], [13, 19, 20, 22, 30, 39], [6, 19, 27, 29, 37, 40], [3, 4, 11, 30, 31, 40]], [2895, "26/9/2021", [2, 10, 17, 20, 27, 34], [2, 7, 17, 21, 35, 38], [3, 8, 9, 12, 16, 21], [0, 12, 30, 36, 41, 45]], [2897, "3/10/2021", [6, 12, 17, 22, 40, 44], [3, 13, 24, 27, 31, 43], [16, 18, 27, 41, 44, 45], [11, 13, 17, 19, 22, 42]], [2898, "6/10/2021", [4, 27, 30, 35, 38, 41], [4, 11, 22, 28, 37, 39], [6, 11, 23, 24, 35, 43], [1, 9, 10, 30, 35, 44]], [2899, "10/10/2021", [2, 9, 15, 19, 26, 27], [14, 24, 34, 38, 40, 43], [8, 12, 17, 20, 22, 39], [10, 21, 23, 28, 34, 39]], [2900, "13/10/2021", [7, 17, 18, 21, 35, 39], [0, 15, 21, 30, 31, 41], [1, 17, 23, 28, 35, 43], [6, 9, 12, 31, 37, 45]], [2901, "17/10/2021", [1, 13, 14, 37, 42, 45], [17, 20, 21, 34, 38, 45], [6, 9, 11, 21, 28, 45], [1, 6, 29, 34, 39, 45]], [2902, "20/10/2021", [18, 21, 23, 30, 31, 38], [9, 16, 24, 39, 43, 45], [12, 13, 14, 20, 22, 38], [0, 1, 13, 25, 27, 42]], [2903, "24/10/2021", [13, 15, 21, 29, 31, 33], [9, 23, 29, 37, 38, 45], [8, 29, 31, 38, 39, 43], [12, 13, 18, 20, 27, 37]], [2904, "27/10/2021", [5, 6, 11, 14, 41, 43], [0, 5, 8, 27, 28, 34], [11, 20, 33, 34, 37, 42], [2, 16, 17, 24, 25, 40]], [2906, "3/11/2021", [0, 5, 16, 17, 34, 40], [6, 10, 11, 37, 39, 45], [7, 11, 19, 34, 36, 42], [5, 6, 8, 10, 13, 18]], [2907, "7/11/2021", [2, 7, 11, 23, 28, 38], [2, 15, 18, 19, 20, 30], [5, 8, 11, 14, 31, 42], [12, 23, 25, 27, 35, 39]], [2908, "10/11/2021", [1, 2, 4, 5, 13, 28], [2, 7, 9, 21, 23, 42], [0, 7, 12, 24, 33, 37], [9, 16, 21, 25, 30, 43]], [2909, "14/11/2021", [9, 12, 15, 22, 29, 42], [1, 18, 19, 22, 33, 40], [2, 14, 15, 17, 21, 29], [11, 18, 20, 22, 33, 39]], [2910, "17/11/2021", [4, 8, 10, 21, 39, 40], [2, 7, 8, 15, 18, 25], [8, 14, 20, 32, 34, 45], [13, 21, 22, 33, 39, 40]], [2911, "21/11/2021", [2, 25, 26, 31, 36, 38], [5, 28, 36, 37, 43, 44], [3, 17, 21, 22, 37, 44], [2, 18, 29, 30, 34, 39]], [2912, "24/11/2021", [4, 5, 22, 26, 29, 45], [3, 7, 9, 20, 37, 45], [5, 8, 26, 29, 32, 37], [2, 12, 33, 37, 42, 45]], [2914, "1/12/2021", [0, 16, 23, 28, 39, 44], [6, 20, 21, 24, 26, 40], [3, 17, 25, 27, 36, 37], [5, 11, 13, 18, 21, 24]], [2915, "5/12/2021", [9, 21, 25, 28, 33, 45], [1, 9, 12, 19, 34, 42], [15, 22, 33, 37, 40, 42], [8, 10, 23, 24, 26, 36]], [2916, "8/12/2021", [16, 18, 24, 28, 33, 37], [7, 20, 32, 35, 42, 43], [3, 9, 12, 17, 21, 31], [11, 21, 22, 26, 31, 32]], [2917, "12/12/2021", [10, 21, 22, 25, 37, 39], [4, 5, 7, 20, 24, 30], [2, 13, 19, 22, 27, 42], [3, 14, 20, 29, 32, 38]], [2918, "15/12/2021", [4, 15, 17, 21, 23, 27], [25, 26, 29, 36, 37, 44], [4, 16, 17, 32, 34, 35], [7, 10, 15, 26, 31, 34]], [2919, "19/12/2021", [4, 15, 17, 21, 23, 27], [25, 26, 29, 36, 37, 44], [4, 16, 17, 32, 34, 35], [7, 10, 15, 26, 31, 34]], [2920, "24/12/2021", [2, 20, 23, 25, 37, 43], [9, 11, 16, 17, 22, 30], [1, 2, 34, 35, 36, 38], [1, 7, 8, 13, 34, 45]], [2922, "5/1/2022", [1, 11, 18, 29, 33, 37], [0, 17, 21, 28, 34, 37], [4, 14, 18, 21, 30, 31], [13, 21, 22, 27, 28, 44]], [2923, "9/1/2022", [0, 6, 13, 27, 31, 41], [1, 10, 11, 30, 33, 44], [14, 21, 26, 31, 32, 34], [0, 10, 11, 13, 33, 43]], [2924, "12/1/2022", [1, 6, 21, 27, 34, 38], [23, 33, 34, 37, 41, 42], [10, 16, 26, 29, 35, 39], [12, 16, 19, 21, 33, 45]], [2925, "16/1/2022", [0, 17, 32, 41, 42, 44], [9, 11, 18, 19, 31, 39], [8, 12, 14, 25, 40, 45], [6, 17, 31, 34, 42, 43]], [2926, "19/1/2022", [9, 10, 11, 20, 33, 34], [10, 12, 20, 25, 28, 45], [9, 12, 20, 26, 29, 30], [3, 4, 20, 25, 27, 42]], [2927, "23/1/2022", [5, 10, 22, 31, 37, 44], [3, 6, 15, 24, 25, 37], [5, 16, 35, 36, 41, 43], [1, 2, 13, 20, 26, 45]], [2928, "26/1/2022", [1, 6, 10, 16, 30, 39], [4, 9, 18, 39, 40, 44], [2, 14, 27, 31, 34, 40], [9, 20, 25, 34, 39, 40]], [2930, "2/2/2022", [2, 6, 18, 33, 34, 41], [12, 17, 24, 33, 36, 37], [3, 15, 22, 38, 39, 45], [16, 17, 26, 36, 38, 43]], [2931, "6/2/2022", [13, 17, 23, 24, 34, 38], [3, 6, 17, 26, 35, 38], [9, 17, 18, 34, 41, 45], [0, 4, 19, 27, 29, 34]], [2932, "9/2/2022", [10, 20, 22, 23, 25, 28], [2, 19, 24, 28, 32, 41], [7, 18, 21, 22, 36, 44], [0, 11, 24, 25, 40, 41]], [2933, "13/2/2022", [7, 21, 29, 30, 33, 37], [4, 8, 11, 34, 42, 44], [9, 18, 36, 40, 42, 44], [6, 13, 18, 20, 22, 24]], [2934, "16/2/2022", [7, 8, 13, 20, 21, 37], [1, 13, 21, 32, 37, 45], [12, 16, 21, 36, 37, 38], [2, 12, 15, 26, 35, 45]], [2935, "20/2/2022", [4, 5, 15, 16, 27, 30], [6, 14, 25, 31, 33, 42], [0, 33, 37, 38, 39, 43], [4, 5, 10, 22, 27, 35]], [2936, "23/2/2022", [7, 12, 23, 31, 38, 43], [7, 21, 26, 27, 29, 41], [1, 2, 4, 8, 19, 20], [2, 4, 6, 22, 38, 40]], [2938, "2/3/2022", [12, 27, 29, 35, 41, 42], [4, 5, 13, 21, 27, 37], [0, 9, 15, 31, 36, 42], [0, 4, 10, 29, 32, 35]], [2939, "6/3/2022", [9, 12, 24, 36, 38, 40], [7, 10, 14, 23, 24, 33], [22, 24, 25, 31, 33, 38], [8, 20, 26, 27, 33, 45]], [2940, "9/3/2022", [8, 10, 16, 22, 34, 42], [0, 14, 17, 38, 39, 43], [11, 15, 33, 36, 38, 42], [0, 3, 15, 32, 33, 41]], [2941, "13/3/2022", [0, 2, 7, 13, 23, 43], [7, 11, 16, 17, 21, 38], [5, 7, 19, 21, 32, 42], [7, 11, 25, 41, 42, 43]], [2942, "16/3/2022", [2, 16, 21, 23, 29, 41], [19, 21, 24, 31, 38, 40], [8, 11, 14, 33, 38, 43], [2, 3, 15, 17, 29, 45]], [2943, "20/3/2022", [7, 8, 27, 28, 38, 41], [2, 12, 15, 21, 31, 36], [7, 10, 19, 25, 29, 36], [11, 17, 23, 26, 30, 35]], [2944, "23/3/2022", [12, 20, 23, 24, 30, 32], [12, 20, 27, 36, 38, 42], [3, 12, 16, 17, 24, 33], [2, 10, 14, 18, 22, 41]], [2945, "27/3/2022", [13, 18, 21, 38, 42, 44], [7, 24, 27, 32, 41, 44], [0, 4, 8, 18, 35, 37], [0, 10, 14, 16, 32, 37]], [2947, "3/4/2022", [11, 16, 18, 32, 41, 42], [1, 3, 25, 26, 27, 39], [10, 28, 32, 37, 43, 45], [4, 11, 15, 25, 29, 31]], [2948, "6/4/2022", [5, 7, 9, 13, 15, 44], [4, 8, 22, 37, 44, 45], [12, 18, 24, 32, 36, 42], [3, 10, 11, 16, 31, 43]], [2949, "10/4/2022", [4, 15, 17, 25, 36, 39], [0, 6, 19, 29, 33, 44], [2, 20, 26, 27, 31, 36], [16, 17, 32, 40, 41, 43]], [2950, "13/4/2022", [0, 10, 13, 24, 38, 43], [12, 14, 25, 29, 33, 39], [1, 11, 19, 27, 32, 34], [19, 22, 34, 36, 39, 42]], [2951, "17/4/2022", [11, 20, 23, 27, 31, 37], [4, 12, 31, 36, 38, 45], [4, 10, 11, 24, 38, 43], [4, 6, 9, 19, 28, 45]], [2952, "20/4/2022", [2, 9, 16, 17, 31, 42], [8, 19, 37, 38, 40, 41], [1, 7, 8, 17, 20, 42], [15, 18, 19, 27, 37, 43]], [2953, "24/4/2022", [2, 4, 8, 15, 16, 38], [1, 9, 13, 24, 27, 33], [1, 3, 21, 32, 39, 42], [11, 17, 29, 35, 36, 41]], [2955, "1/5/2022", [1, 8, 11, 19, 22, 23], [7, 14, 15, 26, 27, 42], [10, 14, 30, 37, 40, 45], [1, 2, 9, 20, 40, 43]], [2956, "4/5/2022", [6, 12, 20, 26, 27, 32], [2, 3, 19, 22, 25, 40], [1, 7, 12, 23, 28, 32], [11, 13, 30, 32, 38, 44]], [2957, "8/5/2022", [11, 14, 22, 32, 35, 44], [1, 3, 14, 24, 32, 38], [1, 5, 8, 10, 25, 30], [12, 14, 20, 21, 39, 44]], [2958, "11/5/2022", [4, 7, 10, 14, 26, 33], [11, 19, 28, 30, 33, 36], [2, 11, 18, 27, 40, 44], [5, 6, 12, 18, 32, 34]], [2959, "15/5/2022", [2, 3, 7, 26, 30, 34], [1, 2, 3, 18, 22, 33], [4, 10, 23, 24, 37, 40], [1, 3, 7, 16, 28, 30]], [2960, "18/5/2022", [4, 14, 17, 27, 39, 43], [1, 6, 19, 20, 25, 37], [8, 13, 16, 39, 41, 42], [2, 8, 11, 18, 25, 45]], [2961, "22/5/2022", [1, 19, 21, 26, 39, 43], [14, 17, 18, 25, 37, 41], [10, 14, 18, 34, 36, 42], [10, 13, 19, 26, 35, 45]], [2962, "25/5/2022", [0, 1, 3, 5, 12, 17], [17, 32, 34, 35, 36, 45], [2, 5, 12, 16, 19, 43], [5, 8, 11, 17, 26, 39]], [2964, "1/6/2022", [8, 17, 21, 30, 38, 44], [3, 10, 11, 21, 24, 40], [0, 4, 24, 29, 32, 38], [0, 1, 9, 14, 39, 44]], [2965, "5/6/2022", [0, 2, 3, 24, 41, 45], [1, 26, 31, 32, 38, 42], [4, 7, 21, 24, 31, 45], [1, 5, 9, 11, 15, 27]], [2966, "8/6/2022", [1, 7, 10, 19, 33, 38], [0, 4, 16, 19, 30, 38], [10, 11, 12, 13, 24, 37], [5, 15, 29, 30, 37, 40]], [2967, "12/6/2022", [1, 7, 11, 16, 41, 45], [4, 7, 28, 34, 37, 40], [3, 5, 25, 26, 36, 44], [4, 17, 20, 34, 37, 41]], [2968, "15/6/2022", [0, 8, 13, 16, 21, 28], [9, 12, 24, 25, 33, 43], [9, 17, 22, 25, 32, 43], [22, 29, 32, 35, 36, 37]], [2969, "19/6/2022", [14, 20, 22, 26, 28, 45], [14, 24, 27, 38, 39, 44], [5, 8, 33, 37, 38, 41], [2, 8, 10, 13, 24, 28]], [2970, "22/6/2022", [1, 4, 23, 31, 42, 43], [9, 15, 17, 19, 33, 40], [1, 7, 22, 33, 37, 45], [0, 3, 18, 19, 36, 44]], [2971, "26/6/2022", [4, 6, 10, 17, 21, 31], [3, 4, 5, 6, 35, 38], [0, 14, 23, 26, 36, 43], [18, 21, 24, 32, 37, 39]], [2973, "3/7/2022", [2, 3, 4, 8, 25, 36], [4, 10, 18, 21, 33, 43], [0, 11, 19, 23, 29, 42], [5, 6, 9, 24, 34, 37]], [2974, "6/7/2022", [2, 3, 16, 36, 39, 44], [9, 21, 24, 28, 42, 44], [12, 16, 19, 28, 33, 35], [1, 4, 22, 28, 31, 41]], [2975, "10/7/2022", [0, 14, 31, 33, 39, 40], [1, 11, 17, 19, 20, 35], [0, 7, 11, 17, 25, 45], [3, 14, 18, 22, 35, 44]], [2976, "13/7/2022", [1, 23, 24, 25, 34, 45], [0, 8, 25, 27, 34, 41], [4, 6, 10, 16, 19, 30], [0, 14, 23, 24, 33, 34]], [2977, "17/7/2022", [9, 12, 21, 39, 41, 44], [10, 11, 22, 23, 35, 40], [1, 6, 17, 20, 28, 44], [2, 9, 10, 25, 28, 37]], [2978, "20/7/2022", [15, 22, 24, 29, 36, 41], [11, 27, 29, 32, 37, 38], [3, 15, 21, 23, 28, 29], [7, 17, 19, 29, 36, 45]], [2979, "24/7/2022", [1, 4, 36, 37, 40, 41], [3, 15, 16, 20, 34, 44], [4, 13, 14, 19, 23, 39], [18, 24, 29, 32, 41, 45]], [2980, "27/7/2022", [2, 6, 12, 21, 40, 45], [9, 11, 16, 24, 26, 42], [2, 7, 8, 21, 23, 38], [4, 6, 10, 17, 18, 30]], [2982, "3/8/2022", [0, 1, 6, 7, 11, 23], [5, 9, 13, 15, 18, 25], [6, 18, 27, 32, 34, 38], [0, 3, 9, 18, 33, 34]], [2983, "7/8/2022", [3, 4, 10, 14, 16, 40], [1, 5, 10, 28, 34, 45], [0, 10, 16, 18, 19, 44], [5, 12, 13, 22, 23, 42]], [2984, "10/8/2022", [2, 4, 5, 10, 14, 30], [5, 14, 26, 43, 44, 45], [6, 24, 27, 34, 35, 39], [7, 22, 23, 28, 29, 36]], [2985, "14/8/2022", [2, 12, 17, 18, 24, 32], [6, 20, 24, 27, 28, 42], [0, 16, 28, 34, 35, 45], [0, 3, 16, 19, 40, 45]], [2986, "17/8/2022", [0, 9, 12, 17, 24, 32], [11, 12, 23, 29, 37, 42], [14, 15, 16, 20, 29, 40], [2, 15, 17, 28, 29, 38]], [2987, "21/8/2022", [10, 24, 34, 35, 38, 45], [7, 11, 16, 17, 19, 40], [7, 30, 34, 35, 40, 44], [4, 11, 13, 27, 42, 43]], [2988, "24/8/2022", [0, 13, 19, 23, 29, 32], [8, 10, 16, 34, 40, 42], [3, 4, 5, 23, 31, 44], [5, 15, 21, 23, 28, 34]], [2990, "1/9/2022", [3, 11, 24, 32, 34, 42], [2, 8, 10, 23, 26, 35], [7, 14, 20, 29, 32, 44], [1, 12, 23, 24, 31, 37]], [2991, "4/9/2022", [0, 12, 24, 28, 38, 42], [3, 6, 11, 35, 44, 45], [6, 14, 15, 26, 36, 37], [3, 10, 11, 21, 23, 29]], [2992, "7/9/2022", [0, 2, 13, 14, 26, 44], [2, 8, 12, 14, 20, 36], [3, 16, 24, 26, 27, 42], [3, 10, 11, 20, 25, 31]], [2993, "11/9/2022", [0, 5, 15, 16, 21, 38], [11, 15, 20, 22, 27, 31], [5, 9, 11, 17, 20, 23], [11, 12, 21, 24, 26, 40]], [2994, "14/9/2022", [3, 4, 12, 14, 21, 44], [8, 10, 11, 22, 25, 42], [8, 11, 13, 21, 27, 40], [2, 5, 8, 12, 16, 21]], [2995, "18/9/2022", [1, 4, 10, 15, 17, 33], [12, 21, 22, 26, 27, 36], [8, 15, 27, 29, 32, 35], [0, 18, 19, 23, 35, 42]], [2996, "21/9/2022", [2, 18, 21, 25, 40, 45], [5, 20, 22, 23, 38, 44], [1, 20, 29, 30, 40, 42], [2, 5, 28, 29, 35, 37]], [2997, "25/9/2022", [3, 8, 10, 13, 18, 41], [4, 7, 9, 25, 33, 39], [6, 16, 19, 26, 27, 30], [19, 27, 33, 40, 42, 43]], [2999, "2/10/2022", [16, 28, 31, 35, 39, 40], [3, 7, 8, 12, 13, 30], [2, 10, 16, 17, 28, 40], [0, 5, 15, 21, 35, 36]], [3000, "5/10/2022", [5, 9, 16, 18, 21, 25], [8, 16, 20, 21, 28, 29], [7, 16, 20, 35, 39, 43], [12, 14, 18, 32, 40, 45]], [3001, "9/10/2022", [3, 5, 26, 28, 34, 36], [13, 24, 25, 33, 39, 43], [11, 26, 31, 32, 37, 43], [3, 12, 23, 27, 34, 38]], [3002, "12/10/2022", [4, 5, 6, 26, 32, 43], [5, 9, 19, 31, 33, 45], [9, 11, 13, 21, 40, 41], [9, 14, 16, 22, 27, 44]], [3003, "16/10/2022", [1, 6, 10, 16, 19, 28], [2, 12, 15, 17, 34, 40], [0, 17, 21, 30, 35, 39], [2, 8, 12, 13, 29, 44]], [3004, "19/10/2022", [9, 12, 25, 30, 31, 37], [4, 7, 10, 13, 26, 43], [0, 14, 18, 24, 40, 41], [8, 9, 20, 23, 30, 36]], [3005, "23/10/2022", [5, 23, 26, 29, 31, 44], [2, 3, 12, 16, 31, 38], [3, 6, 8, 21, 42, 43], [10, 12, 29, 32, 38, 44]], [3006, "26/10/2022", [16, 26, 31, 38, 39, 44], [6, 8, 13, 29, 40, 41], [4, 11, 31, 36, 41, 43], [8, 10, 23, 24, 40, 42]], [3008, "2/11/2022", [22, 32, 34, 37, 41, 45], [11, 18, 30, 35, 38, 39], [8, 17, 19, 37, 38, 39], [2, 24, 25, 31, 44, 45]], [3009, "6/11/2022", [4, 7, 9, 22, 25, 44], [1, 4, 13, 37, 41, 45], [1, 29, 33, 35, 40, 44], [9, 15, 25, 27, 29, 41]], [3010, "9/11/2022", [7, 16, 23, 25, 32, 36], [5, 12, 21, 29, 33, 44], [0, 8, 16, 25, 39, 40], [7, 9, 19, 24, 34, 38]], [3011, "13/11/2022", [1, 3, 9, 12, 25, 40], [14, 16, 17, 33, 39, 43], [1, 17, 19, 37, 38, 43], [10, 17, 18, 20, 24, 45]], [3012, "20/11/2022", [3, 8, 9, 14, 21, 27], [3, 4, 13, 18, 26, 27], [2, 4, 13, 18, 22, 34], [2, 17, 22, 23, 36, 38]], [3013, "23/11/2022", [4, 9, 20, 26, 31, 45], [11, 18, 26, 33, 36, 41], [8, 10, 13, 27, 33, 41], [3, 4, 10, 14, 22, 25]], [3014, "27/11/2022", [17, 20, 24, 30, 34, 36], [3, 5, 11, 24, 26, 36], [0, 6, 8, 12, 24, 34], [2, 6, 8, 10, 21, 44]], [3016, "4/12/2022", [10, 12, 17, 26, 30, 43], [1, 7, 17, 21, 35, 40], [1, 5, 6, 9, 10, 20], [1, 2, 13, 17, 24, 40]], [3017, "7/12/2022", [0, 9, 17, 26, 37, 42], [7, 16, 19, 22, 31, 39], [2, 19, 21, 30, 33, 42], [1, 2, 6, 10, 15, 23]], [3018, "11/12/2022", [6, 16, 23, 24, 40, 41], [2, 4, 12, 29, 38, 44], [3, 14, 20, 22, 36, 41], [9, 11, 15, 22, 30, 32]], [3019, "14/12/2022", [6, 11, 17, 28, 31, 43], [0, 3, 25, 28, 35, 37], [8, 19, 21, 28, 34, 36], [5, 13, 14, 15, 17, 19]], [3020, "18/12/2022", [1, 2, 6, 17, 31, 34], [1, 10, 14, 30, 34, 35], [2, 4, 15, 21, 26, 30], [8, 15, 24, 29, 40, 45]], [3021, "26/12/2022", [1, 8, 19, 20, 23, 40], [8, 16, 21, 26, 43, 44], [2, 9, 11, 15, 17, 20], [5, 15, 22, 34, 35, 43]], [3023, "2/1/2023", [3, 9, 20, 36, 39, 43], [13, 15, 19, 28, 30, 42], [11, 12, 14, 25, 26, 44], [2, 17, 21, 35, 37, 43]], [3024, "4/1/2023", [6, 15, 23, 38, 43, 44], [0, 13, 16, 22, 25, 38], [3, 6, 22, 27, 41, 42], [5, 26, 27, 29, 35, 39]], [3025, "8/1/2023", [5, 6, 22, 25, 34, 35], [2, 7, 12, 14, 25, 27], [4, 9, 13, 21, 28, 31], [1, 5, 7, 17, 30, 36]], [3026, "11/1/2023", [6, 8, 15, 36, 39, 44], [1, 8, 20, 36, 39, 42], [3, 4, 7, 10, 33, 43], [1, 2, 6, 12, 15, 43]], [3027, "15/1/2023", [1, 4, 15, 19, 27, 43], [13, 20, 30, 36, 38, 44], [0, 12, 15, 29, 42, 43], [2, 9, 12, 14, 29, 35]], [3028, "18/1/2023", [2, 6, 12, 15, 36, 42], [18, 22, 27, 35, 40, 41], [0, 31, 35, 36, 37, 41], [4, 5, 8, 12, 31, 32]], [3029, "22/1/2023", [1, 15, 18, 20, 31, 38], [1, 4, 7, 21, 35, 43], [9, 30, 31, 34, 36, 45], [0, 8, 16, 27, 41, 43]], [3030, "25/1/2023", [0, 1, 8, 12, 15, 19], [2, 5, 37, 38, 39, 45], [0, 17, 26, 30, 35, 38], [3, 11, 13, 27, 31, 36]], [3032, "1/2/2023", [14, 16, 29, 32, 36, 40], [9, 19, 25, 33, 41, 44], [12, 22, 25, 30, 38, 41], [0, 1, 11, 17, 20, 28]], [3033, "5/2/2023", [2, 13, 19, 25, 30, 32], [8, 9, 11, 27, 40, 45], [8, 14, 21, 27, 40, 42], [12, 13, 19, 21, 40, 44]], [3034, "8/2/2023", [3, 8, 12, 16, 21, 26], [0, 4, 17, 23, 25, 43], [2, 15, 18, 32, 39, 40], [1, 15, 19, 21, 23, 39]], [3035, "12/2/2023", [6, 17, 24, 26, 34, 40], [3, 5, 8, 17, 26, 33], [1, 14, 19, 25, 27, 45], [6, 12, 33, 34, 35, 38]], [3036, "15/2/2023", [14, 15, 21, 23, 39, 43], [4, 13, 17, 20, 37, 38], [6, 13, 14, 16, 20, 21], [2, 14, 36, 38, 43, 45]], [3037, "19/2/2023", [1, 8, 17, 25, 33, 45], [7, 24, 36, 37, 39, 40], [4, 17, 31, 36, 37, 38], [8, 12, 21, 35, 44, 45]], [3038, "22/2/2023", [2, 9, 13, 24, 35, 40], [0, 1, 3, 8, 16, 39], [9, 18, 33, 36, 38, 42], [12, 29, 37, 38, 42, 43]], [3040, "1/3/2023", [1, 12, 16, 21, 25, 30], [0, 15, 30, 32, 43, 45], [7, 11, 21, 23, 24, 37], [1, 5, 25, 27, 28, 36]], [3041, "5/3/2023", [0, 2, 7, 13, 24, 38], [0, 12, 14, 37, 38, 41], [4, 10, 14, 19, 22, 42], [2, 9, 16, 22, 40, 45]], [3042, "8/3/2023", [7, 18, 21, 32, 37, 39], [0, 2, 15, 22, 31, 38], [18, 21, 28, 31, 35, 43], [9, 14, 22, 36, 39, 41]], [3043, "12/3/2023", [8, 14, 17, 23, 26, 39], [1, 5, 13, 14, 18, 30], [1, 5, 7, 21, 30, 35], [7, 12, 18, 19, 27, 29]], [3044, "15/3/2023", [0, 15, 19, 39, 43, 44], [3, 12, 15, 18, 24, 28], [12, 14, 16, 27, 37, 41], [0, 18, 23, 33, 35, 42]], [3045, "19/3/2023", [1, 19, 24, 25, 27, 35], [6, 19, 23, 25, 31, 33], [7, 14, 26, 31, 38, 42], [4, 25, 38, 41, 43, 45]], [3046, "22/3/2023", [2, 6, 9, 18, 19, 38], [6, 11, 16, 24, 28, 37], [3, 10, 13, 17, 25, 33], [0, 9, 13, 15, 16, 31]], [3047, "26/3/2023", [3, 26, 31, 38, 44, 45], [4, 15, 29, 32, 37, 42], [4, 24, 25, 26, 38, 43], [3, 27, 29, 31, 36, 40]], [3049, "2/4/2023", [6, 15, 24, 26, 28, 29], [1, 6, 11, 22, 29, 36], [1, 2, 11, 26, 30, 42], [0, 3, 6, 23, 30, 31]], [3050, "5/4/2023", [0, 4, 9, 17, 29, 41], [14, 15, 16, 22, 30, 34], [21, 26, 29, 32, 41, 42], [4, 10, 27, 31, 35, 41]], [3051, "9/4/2023", [9, 11, 14, 15, 25, 29], [1, 11, 27, 28, 34, 37], [4, 13, 18, 29, 35, 38], [14, 15, 23, 32, 34, 37]], [3052, "12/4/2023", [22, 27, 34, 36, 38, 44], [2, 5, 32, 34, 38, 43], [4, 13, 15, 19, 29, 40], [6, 11, 24, 25, 34, 43]], [3053, "16/4/2023", [11, 17, 20, 26, 41, 43], [2, 6, 17, 19, 29, 35], [0, 6, 11, 12, 19, 26], [8, 15, 16, 21, 31, 44]], [3054, "19/4/2023", [0, 15, 22, 33, 35, 41], [9, 17, 23, 24, 35, 44], [0, 4, 8, 9, 11, 16], [16, 26, 28, 29, 30, 34]], [3055, "23/4/2023", [7, 26, 29, 45, 34, 12], [43, 30, 21, 26, 9, 29], [17, 13, 28, 22, 38, 40], [42, 8, 25, 6, 4, 11]], [3056, "26/4/2023", [11, 14, 29, 31, 36, 40], [10, 12, 13, 14, 39, 44], [16, 21, 31, 32, 34, 38], [0, 22, 28, 34, 35, 41]], [3058, "3/5/2023", [7, 8, 9, 10, 15, 17], [22, 30, 38, 41, 44, 45], [0, 18, 20, 21, 26, 28], [8, 11, 32, 35, 36, 38]], [3059, "7/5/2023", [23, 33, 39, 41, 43, 44], [2, 30, 31, 36, 39, 41], [5, 9, 28, 30, 41, 45], [7, 20, 23, 34, 35, 36]], [3060, "10/5/2023", [3, 7, 9, 28, 33, 36], [10, 11, 16, 20, 21, 29], [6, 14, 18, 27, 30, 45], [3, 6, 8, 20, 36, 39]], [3061, "14/5/2023", [2, 8, 12, 16, 31, 39], [3, 13, 27, 31, 33, 40], [8, 24, 25, 35, 36, 41], [9, 14, 18, 19, 20, 27]], [3062, "17/5/2023", [1, 15, 25, 38, 39, 44], [10, 17, 25, 35, 42, 45], [9, 11, 16, 20, 22, 43], [1, 6, 13, 17, 34, 38]], [3063, "21/5/2023", [13, 18, 26, 28, 35, 45], [2, 7, 13, 25, 32, 42], [7, 9, 29, 30, 39, 41], [6, 12, 23, 36, 44, 45]], [3064, "24/5/2023", [1, 18, 19, 20, 27, 40], [10, 13, 24, 25, 35, 43], [4, 9, 10, 19, 35, 43], [7, 13, 15, 28, 30, 39]], [3065, "28/5/2023", [3, 13, 26, 30, 33, 45], [0, 2, 10, 11, 25, 31], [11, 20, 27, 32, 33, 36], [13, 26, 28, 29, 40, 44]], [3067, "4/6/2023", [4, 5, 9, 11, 29, 31], [10, 11, 13, 19, 22, 40], [3, 17, 25, 37, 38, 44], [14, 21, 23, 29, 32, 45]], [3068, "7/6/2023", [11, 14, 21, 42, 43, 44], [2, 11, 12, 16, 28, 45], [15, 19, 23, 24, 37, 38], [17, 18, 25, 26, 31, 45]], [3069, "11/6/2023", [7, 42, 43, 0, 6, 25], [12, 18, 32, 22, 36, 23], [5, 19, 13, 2, 45, 32], [30, 3, 22, 35, 4, 16]], [3070, "14/6/2023", [30, 43, 8, 13, 37, 19], [26, 32, 0, 42, 23, 33], [1, 21, 37, 6, 5, 12], [15, 19, 27, 2, 4, 37]], [3071, "18/6/2023", [0, 7, 15, 16, 36, 42], [7, 8, 32, 34, 35, 39], [8, 20, 23, 24, 31, 34], [16, 17, 20, 25, 27, 40]], [3072, "21/6/2023", [8, 15, 24, 29, 32, 36], [4, 9, 14, 30, 35, 38], [10, 14, 16, 20, 31, 36], [17, 22, 27, 29, 35, 45]], [3073, "25/6/2023", [0, 2, 12, 13, 24, 37], [1, 2, 37, 39, 41, 45], [1, 25, 34, 38, 43, 44], [6, 9, 19, 31, 36, 41]], [3075, "2/7/2023", [4, 5, 7, 8, 21, 23], [11, 15, 24, 37, 41, 43], [4, 6, 13, 16, 19, 34], [0, 14, 21, 26, 36, 39]], [3076, "5/7/2023", [31, 24, 43, 45, 40, 6], [13, 5, 40, 9, 18, 41], [34, 5, 10, 37, 4, 23], [23, 25, 12, 4, 21, 43]], [3077, "9/7/2023", [12, 17, 30, 34, 35, 37], [6, 7, 9, 14, 17, 24], [0, 4, 15, 29, 31, 32], [6, 14, 18, 27, 32, 37]], [3078, "12/7/2023", [43, 6, 10, 28, 5, 42], [23, 44, 41, 38, 20, 6], [2, 6, 17, 18, 43, 44], [4, 9, 10, 13, 40, 43]], [3079, "16/7/2023", [1, 23, 27, 30, 39, 41], [1, 23, 27, 30, 39, 41], [2, 10, 18, 20, 25, 36], [0, 3, 9, 24, 29, 45]], [3080, "19/7/2023", [1, 4, 9, 21, 32, 43], [7, 23, 26, 38, 41, 43], [6, 9, 26, 32, 33, 40], [6, 7, 15, 17, 36, 40]], [3081, "23/7/2023", [1, 17, 20, 26, 29, 31], [1, 7, 16, 18, 22, 23], [0, 9, 16, 35, 40, 41], [1, 3, 17, 28, 35, 37]], [3082, "26/7/2023", [18, 20, 22, 36, 39, 40], [2, 11, 15, 19, 31, 37], [4, 5, 11, 20, 23, 26], [4, 25, 26, 29, 31, 36]], [3084, "2/8/2023", [7, 11, 15, 16, 28, 38], [10, 18, 25, 28, 32, 40], [4, 12, 21, 32, 35, 44], [2, 14, 22, 34, 37, 42]], [3085, "6/8/2023", [2, 4, 20, 27, 35, 37], [3, 4, 5, 8, 28, 43], [4, 13, 15, 21, 35, 43], [15, 19, 20, 29, 32, 37]], [3086, "9/8/2023", [28, 3, 18, 10, 32, 33], [26, 31, 38, 35, 45, 40], [37, 28, 11, 16, 19, 42], [45, 41, 27, 21, 11, 40]], [3087, "13/8/2023", [23, 29, 32, 39, 40, 42], [2, 4, 7, 9, 10, 24], [16, 20, 28, 30, 38, 41], [2, 9, 10, 20, 35, 40]], [3088, "16/8/2023", [5, 19, 42, 20, 8, 22], [5, 9, 13, 42, 19, 6], [12, 23, 2, 19, 6, 41], [27, 31, 1, 10, 7, 26]], [3089, "20/8/2023", [40, 43, 8, 6, 21, 36], [31, 40, 10, 24, 9, 13], [44, 17, 39, 35, 8, 5], [23, 14, 32, 33, 42, 5]], [3090, "23/8/2023", [4, 33, 42, 18, 13, 19], [34, 8, 26, 27, 40, 24], [26, 39, 14, 31, 36, 27], [15, 45, 44, 9, 35, 31]], [3091, "27/8/2023", [6, 9, 29, 30, 38, 41], [6, 11, 12, 13, 21, 42], [5, 16, 18, 32, 37, 40], [8, 22, 26, 27, 30, 32]], [3093, "3/9/2023", [9, 15, 19, 32, 39, 42], [6, 12, 13, 36, 40, 44], [2, 5, 11, 16, 17, 34], [8, 11, 13, 19, 25, 35]], [3094, "6/9/2023", [1, 6, 17, 21, 24, 44], [4, 11, 20, 33, 36, 39], [1, 11, 21, 26, 37, 43], [2, 5, 13, 19, 20, 26]], [3095, "10/9/2023", [3, 5, 32, 34, 40, 45], [17, 22, 38, 41, 42, 45], [4, 13, 17, 29, 34, 38], [1, 29, 37, 40, 41, 42]], [3096, "13/9/2023", [15, 8, 45, 27, 28, 4], [5, 13, 17, 22, 31, 32], [14, 16, 21, 22, 41, 42], [29, 35, 37, 41, 43, 45]], [3097, "17/9/2023", [3, 19, 21, 28, 32, 42], [2, 14, 16, 38, 40, 42], [21, 25, 29, 34, 42, 45], [1, 2, 6, 25, 37, 42]], [3098, "20/9/2023", [6, 21, 24, 31, 41, 45], [6, 9, 14, 27, 31, 40], [0, 7, 20, 28, 37, 44], [0, 1, 14, 27, 29, 41]], [3099, "24/9/2023", [4, 10, 15, 23, 37, 43], [0, 8, 20, 21, 24, 26], [20, 23, 28, 34, 38, 44], [0, 2, 21, 26, 34, 38]], [3101, "1/10/2023", [0, 4, 9, 26, 41, 44], [5, 12, 19, 28, 36, 39], [5, 31, 33, 35, 36, 42], [0, 8, 15, 17, 27, 32]], [3102, "4/10/2023", [4, 9, 23, 28, 41, 45], [3, 10, 16, 19, 30, 45], [4, 24, 26, 41, 43, 44], [7, 13, 14, 21, 25, 26]], [3103, "8/10/2023", [4, 8, 12, 14, 32, 39], [7, 8, 11, 22, 35, 39], [5, 8, 14, 22, 27, 38], [7, 13, 23, 37, 38, 41]], [3104, "11/10/2023", [29, 44, 17, 22, 11, 4], [35, 2, 7, 23, 12, 14], [29, 26, 13, 45, 18, 44], [42, 32, 19, 30, 23, 25]], [3105, "15/10/2023", [1, 2, 19, 23, 32, 38], [0, 1, 4, 12, 14, 35], [3, 6, 15, 22, 37, 40], [1, 7, 9, 15, 18, 45]], [3106, "18/10/2023", [10, 26, 40, 41, 44, 45], [13, 17, 19, 25, 39, 42], [14, 15, 33, 37, 39, 40], [3, 25, 26, 35, 40, 44]], [3107, "22/10/2023", [14, 17, 19, 23, 25, 43], [1, 9, 17, 24, 25, 32], [4, 10, 18, 23, 27, 36], [20, 21, 24, 27, 32, 33]], [3108, "25/10/2023", [11, 38, 3, 31, 5, 18], [35, 24, 16, 21, 37, 20], [15, 21, 27, 32, 37, 45], [0, 9, 22, 26, 28, 45]], [3110, "1/11/2023", [5, 9, 25, 31, 38, 45], [0, 6, 18, 19, 20, 38], [12, 27, 31, 33, 38, 44], [1, 6, 7, 15, 39, 45]], [3111, "5/11/2023", [1, 7, 20, 16, 18, 10], [10, 25, 30, 18, 32, 22], [44, 5, 25, 27, 28, 30], [19, 38, 33, 32, 31, 40]], [3112, "8/11/2023", [2, 5, 13, 23, 28, 42], [1, 8, 16, 21, 28, 37], [4, 7, 15, 37, 40, 43], [4, 8, 22, 27, 29, 43]], [3113, "12/11/2023", [0, 12, 17, 27, 35, 41], [12, 20, 23, 35, 36, 37], [13, 15, 20, 29, 41, 44], [2, 9, 15, 17, 18, 30]], [3114, "15/11/2023", [0, 5, 8, 21, 28, 39], [12, 18, 28, 32, 41, 44], [9, 20, 24, 38, 40, 44], [0, 8, 13, 15, 29, 35]], [3115, "19/11/2023", [3, 9, 15, 18, 23, 35], [16, 24, 29, 32, 34, 44], [12, 13, 21, 23, 44, 45], [5, 6, 16, 17, 39, 43]], [3116, "22/11/2023", [4, 7, 14, 17, 18, 21], [15, 16, 24, 33, 36, 41], [3, 23, 24, 35, 37, 43], [3, 4, 7, 15, 21, 30]], [3117, "26/11/2023", [0, 16, 17, 26, 31, 40], [7, 11, 22, 30, 33, 44], [3, 7, 9, 11, 27, 42], [3, 6, 8, 11, 17, 19]], [3119, "3/12/2023", [30, 11, 20, 37, 2, 36], [14, 3, 32, 38, 37, 20], [8, 37, 34, 15, 44, 13], [25, 29, 30, 17, 7, 21]], [3120, "6/12/2023", [17, 8, 31, 33, 5, 24], [39, 13, 41, 3, 24, 16], [0, 40, 29, 16, 13, 19], [12, 13, 1, 35, 9, 10]], [3121, "10/12/2023", [19, 20, 24, 29, 38, 44], [1, 9, 14, 19, 31, 40], [17, 21, 30, 37, 38, 39], [5, 7, 12, 15, 20, 24]], [3122, "13/12/2023", [7, 14, 21, 23, 36, 44], [5, 29, 33, 35, 36, 39], [7, 12, 20, 26, 38, 45], [12, 18, 29, 33, 36, 41]], [3123, "17/12/2023", [2, 17, 29, 33, 35, 39], [1, 9, 11, 19, 43, 45], [9, 10, 18, 33, 41, 45], [3, 19, 23, 24, 31, 35]], [3124, "20/12/2023", [3, 24, 27, 31, 40, 44], [6, 12, 21, 36, 40, 42], [10, 11, 20, 24, 42, 45], [2, 5, 12, 33, 36, 38]], [3125, "24/12/2023", [6, 10, 11, 13, 35, 36], [3, 5, 8, 11, 14, 18], [1, 17, 24, 33, 34, 42], [2, 10, 33, 35, 40, 43]], [3126, "27/12/2023", [1, 4, 33, 36, 39, 40], [7, 15, 18, 38, 43, 45], [5, 14, 20, 25, 36, 43], [9, 18, 27, 33, 39, 41]], [3128, "3/1/2024", [2, 10, 16, 24, 26, 41], [0, 8, 23, 29, 30, 44], [8, 9, 18, 25, 33, 40], [27, 31, 34, 35, 38, 41]], [3129, "7/1/2024", [0, 19, 21, 30, 31, 39], [17, 22, 27, 31, 38, 39], [2, 17, 19, 22, 33, 45], [4, 6, 17, 22, 23, 43]], [3130, "10/1/2024", [2, 3, 4, 15, 19, 26], [3, 7, 11, 22, 33, 38], [15, 21, 24, 25, 28, 45], [19, 23, 24, 27, 30, 38]], [3131, "14/1/2024", [5, 9, 12, 15, 17, 22], [1, 5, 13, 16, 18, 36], [1, 9, 27, 34, 38, 43], [4, 28, 29, 30, 38, 44]], [3132, "17/1/2024", [0, 2, 6, 15, 33, 35], [4, 21, 29, 31, 33, 38], [3, 11, 31, 35, 38, 43], [4, 6, 11, 15, 19, 27]], [3133, "21/1/2024", [40, 1, 11, 19, 37, 9], [6, 4, 1, 43, 11, 0], [5, 36, 2, 30, 13, 11], [40, 44, 16, 32, 24, 12]], [3134, "24/1/2024", [12, 34, 35, 39, 31, 25], [41, 27, 14, 19, 35, 36], [23, 43, 39, 42, 10, 8], [38, 30, 45, 42, 29, 22]], [3135, "28/1/2024", [11, 12, 16, 23, 39, 44], [5, 6, 8, 17, 30, 43], [0, 3, 4, 17, 24, 27], [0, 6, 20, 31, 34, 41]], [3137, "4/2/2024", [6, 8, 17, 33, 41, 43], [2, 11, 15, 17, 23, 37], [10, 17, 20, 30, 36, 39], [3, 19, 21, 22, 33, 39]], [3138, "7/2/2024", [8, 36, 32, 16, 45, 39], [2, 14, 0, 16, 8, 3], [30, 14, 37, 18, 34, 27], [22, 11, 27, 9, 20, 33]], [3139, "11/2/2024", [30, 4, 5, 25, 35, 21], [9, 25, 28, 36, 16, 20], [38, 1, 3, 33, 34, 16], [36, 9, 44, 15, 8, 28]], [3140, "14/2/2024", [30, 40, 7, 41, 16, 26], [19, 20, 38, 18, 12, 32], [25, 8, 31, 10, 43, 11], [10, 3, 12, 44, 37, 41]], [3141, "18/2/2024", [10, 11, 15, 36, 38, 45], [5, 20, 26, 39, 42, 45], [19, 29, 32, 36, 37, 42], [15, 18, 19, 23, 30, 35]], [3142, "21/2/2024", [2, 4, 19, 31, 32, 40], [5, 9, 12, 35, 39, 42], [6, 16, 27, 28, 32, 39], [5, 18, 23, 30, 34, 44]], [3143, "25/2/2024", [4, 17, 35, 31, 39, 16], [13, 15, 10, 20, 3, 21], [10, 37, 30, 19, 17, 2], [11, 1, 35, 25, 34, 32]], [3145, "3/3/2024", [6, 12, 24, 30, 38, 45], [4, 11, 12, 14, 30, 43], [2, 18, 24, 26, 28, 29], [0, 9, 15, 31, 32, 42]], [3146, "6/3/2024", [14, 0, 44, 25, 7, 41], [23, 15, 37, 0, 29, 8], [34, 43, 31, 32, 44, 11], [33, 5, 25, 36, 37, 42]], [3147, "10/3/2024", [12, 23, 31, 33, 35, 41], [14, 25, 36, 39, 43, 44], [1, 8, 10, 15, 34, 42], [10, 11, 18, 24, 29, 39]], [3148, "13/3/2024", [3, 5, 8, 12, 17, 37], [29, 34, 38, 39, 44, 45], [3, 19, 23, 28, 29, 40], [8, 14, 15, 23, 36, 44]], [3149, "17/3/2024", [0, 2, 8, 10, 26, 43], [15, 17, 24, 32, 37, 42], [6, 19, 22, 30, 36, 42], [2, 10, 30, 31, 33, 44]], [3150, "20/3/2024", [12, 15, 35, 40, 41, 45], [0, 11, 13, 28, 29, 44], [0, 10, 19, 22, 27, 34], [4, 10, 24, 26, 28, 39]], [3151, "24/3/2024", [12, 17, 26, 41, 7, 39], [39, 2, 3, 17, 36, 31], [31, 43, 21, 16, 37, 1], [19, 43, 32, 37, 36, 24]], [3152, "27/3/2024", [5, 15, 16, 38, 44, 45], [0, 9, 10, 23, 26, 30], [5, 8, 13, 23, 34, 39], [7, 17, 28, 32, 37, 40]], [3154, "3/4/2024", [7, 13, 25, 30, 33, 42], [0, 14, 29, 32, 35, 39], [5, 11, 12, 13, 21, 42], [4, 11, 17, 35, 37, 40]], [3155, "7/4/2024", [9, 26, 37, 21, 11, 10], [44, 40, 1, 22, 33, 39], [11, 8, 39, 7, 6, 33], [29, 34, 20, 6, 23, 0]], [3156, "10/4/2024", [3, 8, 11, 18, 21, 26], [0, 2, 8, 14, 32, 34], [6, 17, 20, 36, 42, 43], [20, 23, 25, 32, 34, 37]], [3157, "14/4/2024", [9, 14, 22, 28, 29, 41], [8, 16, 24, 29, 31, 33], [8, 12, 24, 25, 42, 45], [4, 7, 14, 18, 24, 44]], [3158, "17/4/2024", [9, 30, 33, 39, 41, 44], [7, 10, 16, 23, 28, 33], [10, 15, 29, 35, 44, 45], [4, 5, 12, 23, 33, 44]], [3159, "21/4/2024", [4, 24, 36, 40, 42, 44], [4, 6, 14, 22, 25, 31], [2, 14, 20, 23, 30, 39], [5, 7, 10, 21, 34, 42]], [3160, "24/4/2024", [5, 9, 22, 23, 25, 43], [13, 23, 25, 30, 39, 45], [1, 5, 8, 26, 29, 44], [4, 5, 17, 31, 37, 38]], [3162, "1/5/2024", [25, 7, 38, 3, 43, 19], [17, 40, 2, 11, 1, 22], [11, 3, 20, 17, 31, 28], [28, 12, 5, 3, 34, 6]], [3163, "5/5/2024", [1, 5, 7, 18, 27, 35], [0, 3, 27, 34, 35, 36], [4, 8, 12, 23, 25, 44], [21, 27, 28, 31, 41, 44]], [3164, "8/5/2024", [12, 14, 16, 21, 27, 36], [0, 14, 16, 20, 24, 45], [1, 10, 18, 20, 40, 45], [2, 15, 33, 34, 35, 40]], [3165, "12/5/2024", [1, 3, 17, 19, 24, 30], [5, 6, 11, 15, 22, 45], [1, 8, 15, 29, 40, 41], [0, 3, 12, 15, 16, 28]], [3166, "15/5/2024", [2, 5, 15, 29, 31, 39], [3, 4, 5, 10, 22, 37], [2, 3, 8, 35, 38, 42], [0, 7, 14, 19, 36, 39]], [3167, "19/5/2024", [10, 22, 26, 29, 30, 41], [0, 9, 15, 16, 35, 40], [8, 13, 14, 32, 35, 42], [2, 7, 14, 15, 22, 31]], [3168, "22/5/2024", [0, 4, 5, 17, 27, 42], [15, 31, 33, 35, 41, 42], [1, 6, 22, 33, 35, 43], [11, 14, 19, 36, 38, 41]], [3169, "26/5/2024", [11, 27, 31, 40, 42, 44], [11, 21, 25, 30, 37, 42], [1, 3, 9, 12, 22, 34], [7, 10, 16, 30, 36, 39]], [3171, "2/6/2024", [3, 5, 9, 18, 24, 35], [7, 19, 23, 24, 27, 45], [12, 14, 20, 26, 33, 39], [12, 20, 28, 32, 34, 38]], [3172, "5/6/2024", [5, 9, 13, 14, 32, 34], [5, 8, 11, 13, 15, 18], [1, 9, 12, 13, 27, 29], [1, 19, 22, 33, 36, 42]], [3173, "9/6/2024", [0, 1, 7, 16, 26, 44], [15, 17, 18, 25, 30, 35], [1, 8, 9, 23, 24, 33], [9, 14, 32, 35, 37, 38]], [3174, "12/6/2024", [30, 31, 39, 40, 41, 42], [2, 5, 14, 19, 20, 37], [12, 18, 34, 37, 38, 40], [17, 19, 28, 29, 32, 45]], [3175, "16/6/2024", [1, 2, 6, 24, 27, 32], [1, 8, 18, 21, 32, 44], [0, 9, 13, 14, 21, 36], [3, 10, 11, 13, 22, 35]], [3176, "19/6/2024", [1, 9, 11, 13, 36, 42], [4, 6, 8, 16, 37, 42], [7, 11, 17, 28, 33, 37], [4, 21, 23, 29, 34, 37]], [3177, "23/6/2024", [6, 8, 13, 14, 25, 34], [3, 23, 26, 29, 30, 33], [11, 14, 20, 27, 28, 43], [5, 7, 9, 25, 28, 29]], [3178, "26/6/2024", [20, 22, 24, 25, 31, 35], [0, 18, 21, 33, 34, 40], [1, 13, 15, 34, 38, 39], [3, 8, 14, 16, 26, 44]], [3180, "3/7/2024", [21, 11, 12, 10, 39, 34], [11, 24, 41, 8, 33, 20], [38, 41, 3, 31, 24, 32], [12, 2, 13, 34, 14, 38]], [3181, "7/7/2024", [2, 15, 17, 19, 20, 36], [8, 16, 32, 33, 37, 40], [7, 14, 26, 33, 35, 40], [1, 2, 11, 27, 34, 44]], [3182, "10/7/2024", [7, 20, 25, 35, 39, 43], [7, 9, 33, 35, 39, 44], [0, 3, 17, 20, 32, 41], [6, 14, 30, 36, 40, 42]], [3183, "14/7/2024", [2, 7, 22, 32, 38, 41], [13, 28, 34, 41, 42, 44], [2, 4, 12, 20, 36, 44], [11, 13, 15, 23, 24, 34]], [3184, "17/7/2024", [3, 6, 16, 19, 35, 42], [8, 16, 25, 29, 32, 44], [7, 9, 15, 19, 29, 33], [15, 19, 20, 25, 40, 42]], [3185, "21/7/2024", [2, 6, 7, 20, 34, 36], [0, 2, 10, 20, 30, 43], [4, 18, 21, 34, 35, 44], [1, 18, 21, 22, 34, 41]], [3186, "24/7/2024", [9, 15, 21, 23, 27, 44], [3, 5, 30, 35, 37, 38], [6, 16, 22, 31, 35, 41], [4, 25, 28, 29, 40, 44]], [3187, "28/7/2024", [0, 10, 27, 38, 41, 42], [8, 9, 24, 28, 35, 36], [0, 24, 25, 27, 33, 44], [13, 16, 26, 27, 30, 39]], [3189, "4/8/2024", [2, 6, 23, 25, 34, 39], [0, 16, 18, 26, 28, 33], [2, 13, 17, 18, 27, 35], [18, 26, 34, 36, 38, 39]], [3190, "7/8/2024", [0, 5, 14, 26, 30, 45], [2, 9, 32, 34, 37, 38], [9, 16, 19, 23, 36, 44], [2, 3, 14, 39, 40, 43]], [3191, "11/8/2024", [10, 16, 24, 27, 33, 43], [6, 7, 14, 15, 17, 18], [1, 11, 19, 22, 35, 43], [8, 13, 23, 28, 29, 41]], [3192, "14/8/2024", [1, 5, 14, 26, 43, 45], [3, 20, 30, 32, 37, 44], [14, 15, 23, 26, 29, 42], [1, 2, 8, 20, 39, 42]], [3193, "18/8/2024", [7, 16, 18, 24, 25, 27], [0, 1, 8, 11, 20, 29], [10, 11, 25, 27, 33, 39], [7, 12, 24, 25, 34, 45]], [3194, "21/8/2024", [12, 15, 27, 38, 39, 41], [8, 9, 16, 18, 28, 42], [0, 1, 2, 20, 24, 32], [3, 8, 16, 18, 40, 44]], [3195, "25/8/2024", [11, 17, 19, 35, 43, 44], [1, 13, 17, 18, 33, 37], [2, 9, 11, 19, 41, 44], [9, 10, 24, 29, 31, 38]], [3197, "1/9/2024", [3, 6, 25, 27, 34, 40], [2, 17, 24, 30, 35, 40], [4, 5, 9, 15, 16, 29], [0, 1, 14, 22, 29, 33]], [3198, "4/9/2024", [1, 5, 6, 8, 14, 22], [2, 4, 11, 21, 26, 37], [1, 11, 12, 25, 36, 40], [2, 14, 16, 20, 29, 42]], [3199, "8/9/2024", [22, 24, 31, 33, 34, 42], [1, 3, 9, 19, 22, 26], [17, 20, 33, 36, 38, 45], [11, 12, 16, 25, 36, 40]], [3200, "11/9/2024", [2, 5, 8, 21, 25, 40], [9, 27, 30, 35, 37, 45], [2, 4, 10, 20, 36, 44], [4, 26, 37, 39, 40, 45]], [3201, "15/9/2024", [9, 12, 14, 23, 28, 39], [2, 15, 22, 26, 32, 44], [12, 18, 19, 22, 30, 38], [23, 25, 29, 35, 36, 40]], [3202, "18/9/2024", [19, 21, 29, 35, 38, 42], [6, 13, 14, 16, 32, 39], [0, 11, 15, 19, 42, 44], [7, 12, 16, 28, 37, 38]], [3203, "22/9/2024", [5, 15, 23, 26, 31, 45], [2, 18, 26, 27, 37, 38], [11, 13, 14, 24, 28, 45], [4, 14, 19, 24, 37, 41]], [3204, "25/9/2024", [0, 8, 13, 14, 15, 24], [17, 19, 25, 33, 37, 45], [15, 24, 28, 31, 33, 43], [0, 3, 18, 35, 38, 44]], [3206, "2/10/2024", [5, 14, 15, 20, 23, 39], [15, 27, 30, 33, 35, 45], [12, 17, 19, 22, 34, 40], [1, 10, 24, 28, 37, 42]], [3207, "6/10/2024", [0, 23, 25, 28, 31, 34], [11, 14, 22, 25, 28, 41], [7, 19, 25, 36, 41, 42], [1, 2, 8, 11, 33, 37]], [3208, "9/10/2024", [2, 7, 23, 25, 27, 38], [8, 15, 22, 25, 32, 36], [13, 19, 21, 23, 29, 30], [4, 16, 30, 34, 41, 45]], [3209, "13/10/2024", [14, 19, 20, 35, 37, 45], [0, 15, 16, 31, 34, 40], [1, 6, 13, 14, 22, 33], [5, 17, 20, 21, 30, 31]], [3210, "16/10/2024", [5, 15, 17, 26, 29, 38], [12, 17, 21, 22, 26, 39], [2, 7, 15, 16, 22, 24], [7, 12, 13, 16, 35, 41]], [3211, "20/10/2024", [3, 6, 11, 16, 34, 43], [17, 25, 26, 37, 38, 44], [17, 27, 30, 33, 34, 44], [20, 21, 23, 24, 34, 45]], [3212, "23/10/2024", [8, 12, 19, 25, 28, 41], [2, 26, 27, 29, 39, 44], [4, 7, 12, 27, 28, 41], [13, 14, 18, 21, 23, 40]], [3213, "27/10/2024", [2, 40, 43, 10, 42, 3], [45, 38, 11, 25, 33, 16], [36, 29, 27, 8, 25, 7], [0, 40, 30, 29, 8, 26]], [3215, "3/11/2024", [38, 14, 29, 27, 44, 7], [24, 1, 25, 27, 12, 2], [1, 32, 5, 33, 11, 4], [19, 34, 10, 8, 43, 45]], [3216, "6/11/2024", [9, 20, 28, 30, 35, 39], [2, 6, 8, 12, 14, 45], [0, 1, 28, 33, 36, 41], [3, 11, 15, 17, 31, 45]], [3217, "10/11/2024", [4, 11, 18, 19, 24, 35], [12, 16, 24, 30, 33, 40], [1, 14, 19, 25, 36, 40], [2, 20, 22, 23, 41, 45]], [3218, "13/11/2024", [1, 3, 12, 19, 26, 28], [16, 21, 22, 29, 36, 42], [7, 11, 14, 32, 33, 43], [2, 7, 18, 36, 37, 45]], [3219, "17/11/2024", [10, 16, 19, 20, 27, 43], [0, 14, 22, 31, 34, 40], [18, 19, 20, 24, 40, 42], [4, 5, 14, 26, 29, 32]], [3220, "20/11/2024", [6, 12, 14, 21, 26, 35], [18, 21, 33, 35, 38, 45], [3, 8, 9, 22, 25, 43], [0, 2, 7, 19, 27, 39]], [3221, "24/11/2024", [5, 6, 7, 9, 29, 41], [18, 26, 28, 35, 42, 45], [3, 5, 8, 19, 20, 41], [27, 28, 31, 38, 40, 42]], [3223, "1/12/2024", [0, 1, 34, 35, 37, 41], [8, 10, 11, 17, 38, 45], [4, 6, 7, 16, 34, 38], [2, 3, 4, 21, 38, 43]], [3224, "4/12/2024", [4, 3, 23, 33, 34, 15], [12, 16, 20, 24, 7, 45], [15, 16, 31, 45, 30, 0], [0, 5, 38, 39, 22, 11]], [3225, "8/12/2024", [2, 10, 23, 24, 32, 42], [8, 9, 17, 24, 25, 33], [1, 16, 24, 25, 36, 41], [5, 8, 18, 30, 33, 40]], [3226, "11/12/2024", [4, 6, 7, 12, 13, 29], [11, 13, 40, 41, 42, 45], [4, 14, 15, 27, 28, 39], [6, 9, 18, 22, 36, 40]], [3227, "15/12/2024", [2, 9, 16, 20, 27, 36], [1, 9, 15, 18, 19, 37], [8, 16, 33, 34, 37, 44], [2, 8, 9, 21, 27, 36]], [3228, "18/12/2024", [9, 11, 15, 27, 40, 42], [1, 3, 19, 20, 23, 40], [8, 27, 33, 37, 38, 40], [14, 19, 22, 25, 32, 42]], [3229, "22/12/2024", [0, 17, 20, 29, 35, 39], [6, 10, 11, 14, 19, 35], [1, 6, 10, 28, 32, 44], [16, 21, 22, 25, 36, 38]], [3230, "24/12/2024", [15, 28, 34, 38, 41, 45], [8, 12, 19, 21, 31, 34], [8, 24, 35, 36, 39, 43], [0, 6, 19, 26, 28, 43]], [3231, "29/12/2024", [8, 13, 26, 28, 31, 36], [8, 16, 17, 21, 32, 42], [7, 10, 20, 26, 38, 41], [8, 13, 29, 38, 40, 45]], [3233, "5/1/2025", [9, 16, 19, 23, 27, 44], [6, 13, 19, 24, 27, 35], [16, 19, 22, 26, 35, 43], [7, 21, 26, 28, 33, 44]], [3234, "8/1/2025", [16, 20, 21, 24, 28, 34], [11, 15, 28, 33, 38, 40], [7, 10, 15, 18, 32, 39], [4, 5, 9, 12, 17, 18]], [3235, "12/1/2025", [11, 15, 22, 37, 38, 43], [2, 20, 23, 30, 33, 45], [2, 6, 13, 34, 37, 44], [0, 2, 9, 22, 28, 32]], [3236, "15/1/2025", [11, 14, 15, 19, 26, 42], [0, 14, 15, 20, 27, 28], [0, 5, 6, 18, 31, 36], [1, 5, 16, 25, 27, 32]], [3237, "19/1/2025", [0, 18, 22, 29, 35, 39], [26, 29, 30, 32, 34, 40], [12, 13, 16, 18, 22, 24], [5, 7, 18, 24, 35, 43]], [3238, "22/1/2025", [3, 10, 16, 22, 42, 44], [14, 17, 22, 24, 26, 30], [7, 24, 35, 37, 41, 45], [5, 16, 21, 22, 35, 42]], [3239, "26/1/2025", [0, 2, 9, 13, 14, 25], [11, 15, 16, 24, 27, 43], [15, 16, 27, 30, 32, 35], [5, 7, 11, 14, 17, 42]], [3241, "2/2/2025", [0, 7, 16, 29, 31, 43], [21, 24, 25, 36, 38, 43], [6, 11, 12, 15, 17, 39], [13, 14, 16, 22, 31, 45]], [3242, "5/2/2025", [0, 1, 2, 18, 29, 42], [2, 5, 9, 16, 22, 23], [13, 14, 17, 23, 31, 37], [3, 15, 32, 36, 38, 42]], [3243, "9/2/2025", [16, 17, 19, 25, 39, 43], [0, 15, 20, 23, 26, 33], [3, 8, 15, 36, 38, 41], [4, 24, 27, 33, 36, 37]], [3244, "12/2/2025", [16, 17, 26, 28, 36, 37], [1, 2, 15, 27, 28, 45], [2, 7, 10, 13, 42, 44], [4, 10, 15, 20, 23, 33]], [3245, "16/2/2025", [9, 22, 25, 31, 37, 42], [20, 26, 27, 30, 37, 45], [15, 17, 24, 25, 33, 36], [7, 9, 12, 13, 24, 31]], [3246, "19/2/2025", [23, 29, 31, 32, 39, 45], [2, 7, 10, 25, 30, 43], [0, 6, 7, 38, 39, 42], [2, 14, 23, 26, 42, 44]], [3247, "23/2/2025", [3, 16, 21, 29, 36, 45], [1, 5, 17, 22, 23, 32], [4, 13, 14, 17, 29, 30], [0, 5, 10, 20, 29, 30]], [3249, "2/3/2025", [42, 38, 16, 34, 9, 43], [38, 35, 21, 34, 30, 1], [44, 25, 1, 8, 12, 0], [3, 1, 14, 34, 22, 17]], [3250, "5/3/2025", [0, 6, 17, 18, 38, 45], [3, 15, 26, 29, 31, 37], [7, 19, 27, 32, 36, 39], [4, 10, 12, 16, 18, 26]], [3251, "9/3/2025", [10, 12, 13, 19, 22, 44], [3, 4, 15, 19, 20, 38], [2, 10, 14, 31, 39, 44], [0, 16, 17, 24, 30, 37]], [3252, "12/3/2025", [11, 16, 18, 22, 33, 34], [8, 18, 23, 27, 38, 42], [2, 7, 17, 19, 25, 36], [1, 6, 17, 24, 36, 42]], [3253, "16/3/2025", [0, 5, 12, 26, 29, 42], [16, 18, 21, 29, 41, 42], [1, 14, 16, 19, 28, 32], [0, 1, 6, 20, 36, 45]], [3254, "19/3/2025", [8, 18, 33, 37, 39, 44], [2, 8, 12, 15, 26, 38], [16, 21, 25, 31, 33, 42], [8, 13, 20, 24, 27, 32]], [3255, "23/3/2025", [0, 1, 11, 13, 27, 44], [13, 20, 21, 30, 31, 37], [16, 22, 29, 38, 43, 45], [4, 5, 9, 30, 32, 36]], [3256, "26/3/2025", [1, 5, 20, 21, 29, 30], [13, 14, 17, 22, 24, 39], [10, 12, 18, 34, 38, 45], [0, 3, 17, 25, 33, 44]], [3258, "2/4/2025", [5, 8, 12, 28, 39, 40], [8, 16, 19, 33, 38, 39], [10, 27, 29, 31, 36, 37], [3, 4, 5, 6, 22, 41]], [3259, "6/4/2025", [2, 5, 9, 13, 29, 38], [4, 8, 13, 22, 32, 37], [7, 15, 24, 27, 37, 42], [4, 13, 35, 37, 41, 43]], [3260, "9/4/2025", [9, 18, 22, 41, 42, 44], [12, 18, 30, 31, 41, 42], [2, 10, 16, 37, 38, 43], [0, 2, 11, 14, 19, 38]], [3261, "13/4/2025", [5, 8, 14, 18, 25, 31], [6, 17, 20, 29, 38, 44], [10, 19, 23, 43, 44, 45], [2, 9, 16, 24, 28, 36]], [3262, "16/4/2025", [4, 20, 36, 37, 40, 45], [0, 3, 12, 13, 27, 41], [2, 8, 11, 22, 24, 28], [4, 21, 29, 31, 39, 45]], [3263, "20/4/2025", [2, 6, 7, 17, 36, 45], [11, 16, 22, 24, 29, 31], [2, 8, 10, 18, 19, 37], [1, 5, 24, 33, 34, 38]], [3264, "23/4/2025", [2, 15, 21, 29, 33, 36], [9, 12, 13, 16, 26, 41], [12, 15, 18, 33, 35, 41], [3, 6, 8, 17, 20, 21]], [3265, "27/4/2025", [3, 26, 29, 30, 33, 43], [10, 12, 14, 24, 30, 39], [13, 15, 19, 33, 38, 40], [0, 16, 17, 30, 35, 41]], [3267, "4/5/2025", [7, 13, 24, 33, 37, 45], [2, 4, 6, 16, 27, 41], [8, 10, 12, 17, 31, 45], [6, 9, 32, 36, 42, 43]], [3268, "7/5/2025", [4, 14, 16, 31, 41, 43], [12, 17, 31, 33, 35, 42], [9, 17, 28, 29, 41, 43], [8, 11, 12, 15, 20, 30]], [3269, "11/5/2025", [5, 16, 19, 26, 27, 37], [0, 2, 27, 28, 33, 37], [2, 20, 29, 31, 33, 44], [3, 22, 26, 39, 40, 41]], [3270, "14/5/2025", [3, 11, 20, 24, 27, 37], [4, 8, 15, 21, 22, 29], [8, 24, 36, 38, 41, 43], [8, 10, 23, 27, 28, 29]], [3271, "18/5/2025", [8, 13, 18, 23, 36, 37], [4, 24, 26, 33, 39, 42], [0, 2, 5, 40, 42, 44], [10, 19, 22, 24, 29, 37]], [3272, "21/5/2025", [2, 8, 10, 14, 19, 37], [1, 9, 13, 14, 18, 38], [10, 14, 17, 24, 30, 42], [13, 29, 30, 36, 38, 42]], [3273, "25/5/2025", [4, 8, 15, 17, 25, 30], [13, 15, 22, 25, 31, 35], [8, 15, 19, 22, 35, 43], [17, 31, 34, 37, 39, 42]], [3275, "1/6/2025", [4, 17, 21, 25, 33, 34], [8, 11, 15, 24, 30, 34], [4, 20, 27, 30, 33, 40], [6, 9, 22, 37, 42, 45]], [3276, "4/6/2025", [1, 4, 8, 12, 19, 22], [5, 10, 13, 15, 18, 22], [8, 9, 12, 29, 40, 43], [0, 1, 9, 12, 17, 29]], [3277, "8/6/2025", [13, 17, 25, 33, 34, 41], [3, 10, 15, 18, 20, 25], [15, 16, 19, 24, 26, 27], [6, 7, 19, 26, 35, 41]], [3278, "11/6/2025", [4, 17, 27, 28, 36, 43], [5, 31, 32, 34, 41, 44], [10, 14, 16, 20, 29, 36], [6, 7, 28, 33, 39, 42]], [3279, "15/6/2025", [2, 10, 27, 34, 41, 44], [9, 11, 40, 41, 42, 44], [9, 11, 26, 32, 41, 42], [4, 10, 16, 37, 38, 45]], [3280, "18/6/2025", [0, 8, 21, 24, 30, 38], [1, 4, 13, 20, 29, 31], [6, 7, 21, 25, 30, 41], [6, 13, 17, 27, 32, 40]], [3281, "22/6/2025", [1, 5, 7, 10, 15, 34], [13, 24, 27, 29, 33, 41], [14, 16, 19, 32, 40, 45], [10, 16, 17, 21, 27, 33]], [3282, "25/6/2025", [6, 13, 26, 28, 36, 42], [5, 13, 19, 22, 26, 32], [3, 4, 8, 11, 24, 42], [1, 4, 5, 6, 38, 39]], [3284, "2/7/2025", [1, 4, 7, 16, 29, 33], [8, 17, 18, 23, 43, 45], [3, 21, 33, 35, 41, 42], [1, 4, 10, 29, 31, 43]], [3285, "6/7/2025", [29, 8, 32, 23, 30, 27], [35, 18, 13, 43, 23, 10], [26, 23, 14, 34, 20, 13], [43, 23, 21, 32, 36, 11]], [3286, "9/7/2025", [0, 1, 6, 9, 10, 33], [7, 11, 14, 27, 33, 38], [3, 8, 15, 18, 28, 42], [2, 10, 13, 14, 29, 40]], [3287, "13/7/2025", [37, 40, 36, 8, 41, 4], [26, 20, 2, 40, 21, 32], [13, 9, 24, 31, 8, 10], [31, 44, 19, 38, 43, 33]], [3288, "16/7/2025", [25, 7, 27, 36, 17, 4], [20, 6, 0, 9, 4, 37], [31, 19, 25, 35, 38, 22], [38, 26, 45, 34, 14, 10]], [3289, "20/7/2025", [43, 36, 31, 9, 12, 24], [29, 41, 20, 23, 2, 9], [44, 9, 16, 21, 23, 20], [21, 12, 20, 9, 15, 13]], [3290, "23/7/2025", [36, 5, 37, 24, 0, 23], [26, 34, 38, 32, 0, 12], [13, 35, 9, 11, 36, 25], [6, 28, 12, 21, 4, 24]], [3291, "27/7/2025", [35, 43, 20, 30, 24, 10], [14, 3, 23, 26, 10, 38], [35, 0, 31, 34, 40, 38], [27, 8, 7, 17, 28, 1]], [3293, "3/8/2025", [32, 18, 26, 29, 42, 0], [25, 38, 7, 27, 45, 22], [44, 34, 33, 24, 40, 16], [41, 45, 32, 4, 11, 27]], [3294, "6/8/2025", [32, 9, 1, 44, 36, 2], [6, 22, 32, 19, 15, 39], [8, 17, 43, 44, 24, 31], [13, 35, 9, 23, 7, 32]], [3295, "10/8/2025", [20, 22, 31, 18, 16, 28], [33, 43, 17, 2, 1, 23], [39, 11, 12, 40, 3, 29], [12, 17, 9, 36, 8, 35]], [3296, "13/8/2025", [43, 7, 6, 30, 2, 40], [28, 26, 35, 34, 33, 25], [44, 22, 17, 12, 40, 4], [11, 17, 10, 5, 24, 34]], [3297, "17/8/2025", [32, 18, 5, 14, 16, 42], [38, 44, 39, 23, 8, 24], [34, 23, 38, 16, 44, 10], [27, 30, 42, 44, 33, 34]], [3298, "20/8/2025", [8, 9, 4, 44, 5, 12], [22, 6, 34, 7, 25, 9], [15, 41, 20, 44, 14, 26], [35, 33, 26, 44, 30, 40]], [3299, "24/8/2025", [11, 8, 45, 17, 10, 38], [11, 0, 35, 15, 1, 19], [45, 24, 44, 32, 23, 33], [5, 7, 2, 16, 33, 6]], [3300, "27/8/2025", [26, 30, 28, 22, 21, 36], [30, 42, 0, 35, 12, 18], [8, 9, 18, 34, 14, 31], [20, 29, 3, 28, 1, 40]], [3302, "3/9/2025", [28, 5, 18, 40, 39, 19], [19, 25, 17, 18, 24, 43], [40, 0, 38, 11, 42, 9], [4, 41, 3, 27, 31, 20]], [3303, "7/9/2025", [21, 16, 31, 32, 29, 27], [12, 35, 22, 19, 26, 40], [30, 24, 12, 18, 44, 6], [38, 6, 29, 42, 35, 32]], [3304, "10/9/2025", [19, 4, 7, 42, 9, 15], [9, 4, 13, 30, 0, 22], [40, 31, 15, 34, 41, 12], [6, 11, 44, 31, 1, 42]], [3305, "14/9/2025", [19, 4, 44, 12, 40, 39], [4, 15, 20, 29, 16, 35], [31, 36, 4, 22, 15, 11], [3, 17, 21, 9, 19, 41]], [3306, "17/9/2025", [1, 16, 19, 21, 35, 38], [23, 20, 37, 30, 11, 21], [41, 11, 37, 24, 45, 30], [45, 25, 21, 14, 18, 29]], [3307, "21/9/2025", [21, 34, 37, 41, 18, 12], [6, 3, 17, 21, 31, 24], [3, 30, 32, 0, 23, 35], [41, 15, 2, 42, 36, 44]], [3308, "24/9/2025", [22, 14, 2, 9, 30, 31], [33, 13, 18, 12, 4, 10], [2, 18, 15, 7, 22, 27], [38, 12, 28, 23, 33, 11]], [3310, "1/10/2025", [5, 32, 6, 44, 9, 34], [6, 20, 44, 45, 13, 25], [22, 21, 19, 15, 3, 43], [26, 6, 41, 20, 45, 30]], [3311, "5/10/2025", [34, 12, 13, 14, 40, 23], [15, 37, 21, 42, 27, 45], [21, 25, 16, 24, 45, 34], [18, 13, 43, 0, 25, 17]], [3312, "8/10/2025", [43, 6, 29, 16, 25, 4], [43, 12, 18, 0, 28, 29], [37, 9, 34, 12, 1, 2], [17, 33, 1, 25, 6, 12]], [3313, "12/10/2025", [6, 3, 4, 31, 35, 43], [39, 29, 36, 30, 15, 16], [17, 0, 22, 3, 2, 21], [6, 38, 10, 1, 16, 21]], [3314, "15/10/2025", [21, 17, 43, 0, 39, 14], [26, 33, 44, 41, 21, 6], [15, 3, 29, 36, 39, 22], [22, 23, 29, 1, 35, 24]], [3315, "19/10/2025", [37, 44, 38, 10, 2, 4], [6, 30, 25, 31, 44, 7], [38, 20, 15, 14, 40, 3], [12, 11, 40, 31, 19, 1]], [3316, "22/10/2025", [43, 42, 36, 39, 11, 29], [34, 32, 24, 20, 5, 14], [45, 40, 42, 34, 25, 43], [29, 31, 17, 33, 35, 39]], [3317, "26/10/2025", [37, 35, 17, 39, 23, 43], [0, 32, 35, 3, 39, 29], [8, 39, 11, 17, 37, 22], [0, 10, 15, 16, 27, 25]], [3319, "2/11/2025", [36, 12, 29, 33, 9, 21], [14, 45, 30, 18, 41, 35], [31, 38, 24, 32, 1, 12], [24, 9, 30, 17, 34, 40]], [3320, "5/11/2025", [5, 9, 26, 2, 28, 45], [17, 22, 26, 5, 18, 21], [25, 4, 3, 15, 1, 31], [40, 33, 17, 30, 41, 37]], [3321, "9/11/2025", [9, 16, 45, 20, 2, 38], [39, 38, 4, 24, 19, 23], [28, 34, 19, 37, 32, 41], [32, 13, 22, 12, 16, 0]], [3322, "12/11/2025", [14, 3, 39, 21, 17, 42], [29, 0, 44, 1, 22, 12], [2, 22, 26, 20, 7, 10], [19, 26, 5, 24, 43, 20]], [3323, "16/11/2025", [45, 14, 29, 37, 24, 12], [18, 29, 34, 30, 3, 33], [39, 35, 5, 4, 10, 32], [22, 43, 41, 25, 38, 40]], [3324, "19/11/2025", [18, 21, 16, 40, 27, 19], [36, 14, 18, 0, 19, 2], [27, 0, 2, 17, 6, 40], [36, 40, 30, 4, 41, 6]], [3325, "23/11/2025", [32, 4, 2, 10, 18, 44], [26, 33, 21, 24, 35, 8], [40, 34, 25, 41, 20, 36], [34, 27, 16, 18, 45, 11]], [3326, "26/11/2025", [11, 4, 44, 40, 25, 21], [41, 16, 24, 8, 14, 22], [2, 28, 16, 19, 3, 13], [44, 13, 22, 40, 39, 36]], [3328, "3/12/2025", [15, 45, 40, 29, 1, 7], [29, 31, 45, 4, 34, 16], [45, 15, 5, 40, 25, 33], [5, 29, 43, 14, 33, 17]], [3329, "7/12/2025", [12, 29, 3, 5, 24, 41], [24, 8, 22, 32, 12, 19], [4, 10, 40, 35, 1, 24], [5, 36, 41, 11, 43, 7]], [3330, "10/12/2025", [0, 34, 28, 41, 25, 26], [17, 35, 8, 43, 29, 28], [6, 36, 34, 16, 22, 4], [40, 2, 13, 43, 31, 32]], [3331, "14/12/2025", [12, 36, 45, 32, 17, 14], [30, 0, 18, 31, 25, 45], [20, 38, 3, 25, 29, 19], [14, 39, 8, 35, 32, 31]], [3332, "17/12/2025", [44, 27, 33, 14, 22, 39], [7, 31, 3, 44, 39, 24], [40, 32, 10, 27, 17, 26], [19, 22, 41, 17, 6, 29]], [3333, "21/12/2025", [35, 8, 10, 25, 33, 42], [40, 33, 22, 14, 29, 42], [35, 34, 8, 15, 31, 42], [43, 31, 6, 30, 13, 24]], [3334, "24/12/2025", [34, 5, 42, 4, 28, 27], [3, 16, 38, 45, 42, 6], [38, 25, 28, 24, 16, 34], [35, 25, 7, 15, 41, 13]], [3335, "28/12/2025", [38, 5, 13, 22, 43, 40], [36, 44, 28, 13, 32, 12], [40, 31, 12, 21, 8, 36], [36, 1, 15, 28, 39, 21]], [3337, "4/1/2026", [29, 40, 39, 4, 9, 27], [32, 17, 11, 26, 20, 29], [13, 5, 16, 39, 35, 32], [12, 33, 36, 30, 7, 19]], [3338, "7/1/2026", [15, 14, 28, 17, 34, 32], [4, 45, 10, 1, 22, 6], [27, 31, 42, 33, 35, 13], [6, 7, 17, 4, 19, 35]], [3339, "11/1/2026", [25, 7, 37, 41, 18, 27], [41, 1, 35, 16, 22, 24], [18, 25, 2, 3, 22, 36], [7, 41, 26, 33, 36, 19]], [3340, "14/1/2026", [31, 33, 38, 17, 34, 3], [37, 19, 40, 26, 14, 30], [23, 21, 43, 37, 27, 24], [20, 13, 4, 29, 9, 5]], [3341, "18/1/2026", [11, 17, 31, 18, 14, 8], [42, 1, 20, 32, 7, 21], [35, 37, 43, 0, 38, 33], [8, 6, 40, 31, 33, 27]], [3342, "21/1/2026", [42, 16, 7, 20, 0, 21], [38, 22, 33, 32, 10, 15], [10, 21, 34, 7, 33, 45], [12, 40, 13, 18, 38, 10]], [3343, "25/1/2026", [6, 7, 20, 25, 33, 8], [0, 9, 27, 14, 1, 12], [17, 6, 26, 34, 32, 41], [44, 41, 28, 40, 45, 21]], [3345, "1/2/2026", [3, 25, 33, 45, 12, 42], [24, 39, 13, 6, 23, 26], [34, 31, 19, 39, 44, 7], [31, 33, 26, 22, 28, 34]], [3346, "4/2/2026", [23, 44, 45, 18, 40, 24], [2, 0, 38, 13, 12, 25], [39, 21, 4, 17, 20, 37], [23, 4, 32, 37, 38, 7]], [3347, "8/2/2026", [33, 20, 23, 44, 0, 9], [43, 8, 21, 36, 29, 20], [35, 3, 34, 8, 43, 13], [28, 8, 23, 20, 45, 27]], [3348, "11/2/2026", [6, 12, 24, 26, 40, 41], [3, 17, 21, 34, 38, 43], [7, 11, 13, 14, 36, 37], [4, 7, 12, 22, 26, 39]], [3349, "15/2/2026", [40, 26, 30, 2, 0, 23], [4, 17, 15, 22, 11, 25], [45, 8, 31, 37, 5, 17], [14, 2, 10, 9, 28, 38]], [3350, "18/2/2026", [39, 0, 45, 27, 36, 5], [23, 12, 11, 22, 44, 37], [41, 36, 28, 11, 40, 16], [9, 25, 35, 5, 18, 16]], [3351, "22/2/2026", [40, 42, 9, 10, 23, 3], [9, 21, 7, 27, 2, 17], [3, 24, 14, 20, 18, 5], [40, 41, 20, 22, 27, 6]], [3353, "1/3/2026", [10, 41, 7, 6, 25, 15], [13, 11, 15, 19, 12, 25], [26, 11, 29, 35, 6, 34], [31, 1, 17, 5, 14, 38]], [3354, "4/3/2026", [13, 10, 37, 21, 6, 0], [27, 18, 34, 6, 4, 1], [33, 29, 43, 5, 27, 37], [25, 36, 28, 19, 14, 16]], [3355, "8/3/2026", [18, 20, 9, 14, 12, 11], [21, 31, 23, 14, 15, 7], [3, 9, 40, 21, 16, 19], [10, 35, 43, 21, 44, 9]], [3356, "11/3/2026", [4, 36, 8, 15, 12, 2], [33, 17, 41, 8, 42, 7], [35, 45, 42, 39, 0, 41], [33, 14, 4, 16, 26, 36]], [3357, "15/3/2026", [8, 12, 40, 18, 37, 42], [38, 42, 40, 26, 25, 22], [41, 13, 42, 14, 29, 12], [13, 28, 35, 23, 17, 11]], [3358, "18/3/2026", [34, 3, 22, 18, 26, 44], [1, 14, 28, 36, 17, 20], [41, 36, 43, 33, 5, 12], [24, 44, 25, 28, 12, 40]], [3359, "22/3/2026", [37, 10, 18, 28, 13, 34], [11, 40, 23, 27, 42, 36], [27, 28, 36, 42, 12, 29], [3, 10, 33, 27, 39, 18]], [3360, "25/3/2026", [15, 9, 38, 1, 19, 18], [9, 5, 29, 15, 18, 0], [6, 8, 42, 36, 15, 24], [16, 24, 1, 36, 42, 45]], [3362, "1/4/2026", [34, 22, 20, 29, 43, 27], [32, 39, 20, 30, 41, 19], [6, 36, 33, 29, 13, 17], [7, 12, 6, 8, 35, 41]], [3363, "5/4/2026", [1, 44, 16, 34, 32, 31], [33, 31, 15, 45, 34, 3], [31, 24, 36, 12, 40, 18], [8, 32, 12, 23, 0, 36]], [3364, "8/4/2026", [1, 14, 41, 33, 38, 44], [3, 8, 18, 32, 42, 17], [22, 13, 41, 19, 25, 40], [26, 8, 36, 14, 22, 5]], [3365, "12/4/2026", [24, 9, 35, 7, 6, 4], [16, 34, 1, 35, 41, 5], [38, 27, 37, 30, 35, 26], [43, 44, 10, 42, 0, 19]], [3366, "15/4/2026", [33, 35, 5, 32, 38, 6], [41, 40, 27, 4, 16, 10], [2, 7, 29, 38, 45, 16], [12, 30, 26, 7, 11, 36]], [3367, "19/4/2026", [10, 12, 30, 20, 0, 37], [33, 26, 11, 39, 21, 4], [12, 10, 44, 17, 27, 41], [23, 35, 20, 7, 41, 13]], [3368, "22/4/2026", [20, 17, 42, 30, 16, 28], [4, 1, 28, 15, 20, 6], [32, 2, 40, 9, 42, 41], [40, 38, 11, 34, 14, 20]], [3369, "26/4/2026", [6, 7, 43, 13, 4, 19], [32, 12, 14, 5, 34, 3], [25, 1, 16, 33, 8, 43], [15, 6, 45, 3, 38, 19]], [3371, "3/5/2026", [42, 17, 18, 20, 5, 13], [20, 37, 3, 15, 14, 40], [34, 30, 25, 35, 3, 33], [20, 0, 7, 30, 40, 5]], [3372, "6/5/2026", [7, 39, 37, 4, 24, 15], [0, 23, 24, 40, 6, 1], [8, 44, 24, 15, 1, 21], [6, 43, 40, 3, 21, 4]], [3373, "10/5/2026", [13, 26, 34, 6, 2, 0], [27, 4, 13, 0, 1, 34], [18, 38, 17, 5, 27, 32], [15, 37, 26, 36, 0, 40]], [3374, "13/5/2026", [32, 6, 30, 29, 44, 26], [11, 1, 17, 40, 42, 6], [10, 41, 20, 43, 8, 2], [14, 12, 15, 13, 35, 22]], [3375, "17/5/2026", [18, 8, 32, 22, 10, 7], [33, 13, 22, 7, 9, 45], [26, 36, 16, 45, 25, 42], [13, 23, 37, 26, 42, 4]], [3376, "20/5/2026", [5, 8, 10, 12, 28, 34], [11, 14, 20, 35, 39, 43], [8, 12, 15, 18, 21, 36], [0, 7, 21, 25, 29, 35]], [3377, "24/5/2026", [7, 45, 8, 4, 40, 0], [23, 13, 33, 8, 45, 9], [9, 3, 15, 6, 28, 43], [27, 26, 14, 37, 30, 23]], [3378, "27/5/2026", [27, 42, 30, 16, 26, 32], [14, 22, 23, 32, 2, 24], [9, 1, 43, 6, 21, 0], [22, 37, 34, 43, 44, 23]], [3380, "3/6/2026", [13, 29, 41, 27, 17, 7], [3, 6, 21, 29, 8, 20], [42, 17, 12, 39, 22, 32], [31, 12, 21, 23, 41, 45]], [3381, "7/6/2026", [17, 33, 28, 27, 26, 1], [4, 8, 9, 15, 28, 0], [12, 35, 33, 14, 16, 5], [12, 9, 21, 41, 16, 33]], [3382, "10/6/2026", [30, 21, 2, 10, 36, 18], [21, 33, 44, 25, 27, 0], [41, 17, 11, 28, 13, 18], [0, 11, 10, 34, 25, 16]], [3383, "14/6/2026", [15, 21, 12, 44, 5, 31], [4, 30, 36, 22, 25, 16], [37, 23, 8, 22, 6, 16], [8, 0, 14, 35, 5, 22]], [3384, "17/6/2026", [24, 32, 45, 19, 7, 26], [12, 33, 24, 28, 26, 42], [31, 27, 16, 9, 8, 36], [24, 29, 2, 40, 26, 44]], [3385, "21/6/2026", [41, 32, 37, 1, 19, 38], [7, 2, 42, 3, 4, 23], [3, 30, 9, 35, 43, 11], [25, 37, 10, 42, 6, 33]], [3386, "24/6/2026", [38, 43, 0, 16, 30, 20], [11, 41, 31, 21, 7, 38], [3, 15, 23, 12, 1, 10], [14, 28, 26, 32, 27, 15]], [3388, "1/7/2026", [37, 39, 32, 27, 29, 33], [22, 23, 5, 36, 14, 45], [29, 25, 3, 9, 1, 7], [1, 22, 10, 15, 36, 37]], [3389, "5/7/2026", [40, 27, 37, 3, 5, 43], [26, 32, 24, 22, 5, 28], [29, 19, 15, 5, 39, 44], [17, 4, 40, 20, 15, 42]], [3390, "8/7/2026", [25, 31, 16, 3, 24, 1], [3, 43, 31, 20, 36, 2], [11, 41, 18, 31, 38, 23], [22, 10, 2, 23, 40, 32]], [3391, "12/7/2026", [42, 22, 30, 37, 25, 19], [34, 21, 1, 16, 5, 33], [4, 34, 39, 31, 18, 22], [34, 31, 37, 21, 42, 3]], [3392, "16/7/2026", [45, 5, 31, 17, 27, 28], [8, 41, 23, 33, 36, 21], [17, 32, 25, 4, 14, 10], [18, 19, 29, 4, 14, 28]], [3393, "19/7/2026", [42, 36, 41, 0, 5, 10], [34, 24, 6, 42, 31, 43], [1, 30, 43, 38, 8, 18], [2, 7, 20, 45, 23, 44]], [3394, "22/7/2026", [9, 21, 37, 12, 8, 28], [5, 22, 0, 4, 1, 3], [22, 45, 25, 3, 5, 8], [10, 42, 13, 40, 6, 43]], [3395, "26/7/2026", [2, 38, 34, 27, 37, 0], [3, 1, 6, 0, 10, 35], [42, 28, 24, 6, 32, 39], [15, 35, 30, 39, 17, 36]], [3397, "2/8/2026", [35, 17, 14, 19, 3, 4], [5, 31, 28, 32, 22, 41], [11, 14, 29, 8, 44, 33], [10, 38, 20, 25, 5, 24]], [3398, "5/8/2026", [6, 18, 22, 31, 10, 9], [25, 13, 30, 11, 26, 23], [18, 23, 31, 3, 1, 24], [40, 30, 9, 18, 1, 16]], [3399, "9/8/2026", [30, 31, 44, 25, 24, 23], [20, 8, 4, 24, 16, 36], [24, 22, 3, 25, 42, 7], [33, 13, 23, 21, 26, 32]], [3400, "12/8/2026", [18, 9, 15, 28, 31, 2], [43, 28, 34, 44, 2, 18], [37, 16, 12, 30, 43, 29], [32, 9, 10, 6, 35, 2]], [3401, "16/8/2026", [10, 17, 1, 25, 2, 6], [12, 10, 3, 26, 33, 16], [29, 24, 12, 2, 40, 14], [7, 21, 32, 37, 30, 27]], [3402, "19/8/2026", [0, 27, 42, 21, 24, 26], [27, 36, 19, 25, 24, 29], [39, 29, 2, 9, 36, 21], [20, 1, 4, 37, 5, 43]], [3403, "23/8/2026", [23, 11, 16, 26, 5, 9], [39, 14, 10, 25, 30, 37], [10, 8, 22, 36, 30, 37], [20, 28, 24, 23, 39, 35]], [3404, "26/8/2026", [7, 23, 45, 14, 22, 40], [17, 40, 38, 36, 11, 5], [5, 0, 10, 26, 20, 28], [13, 36, 14, 6, 37, 21]], [3406, "2/9/2026", [2, 20, 16, 38, 22, 21], [23, 34, 12, 28, 26, 16], [37, 3, 32, 0, 41, 22], [4, 3, 13, 42, 23, 0]], [3407, "6/9/2026", [19, 22, 10, 29, 36, 43], [45, 3, 28, 32, 24, 10], [20, 24, 0, 8, 23, 32], [41, 30, 9, 1, 35, 21]]];
+  const MODES = ['tradicional', 'segunda', 'revancha', 'siempresale'];
+  const MODE_NAME = {tradicional: 'Tradicional', segunda: 'Segunda', revancha: 'Revancha', siempresale: 'Siempre Sale'};
+  const MODE_SHORT = {tradicional: 'Tradicional', segunda: 'Segunda', revancha: 'Revancha', siempresale: 'Siempre Sale'};
+  const BALLS = 46;          // 00..45 (Quini 6 oficial usa 46 bolillas)
+  const N = DRAWS.length;
+  const TOTAL_COMB = 9366819;   // C(46,6)
+  const P_BALL = 6 / 46;        // probabilidad teorica de un numero en 1 sorteo
+  const PAIR_DIV = 69;          // C(46,6)/C(44,4): sorteos entre pares esperados
+
+  // pesos configurables POR DEFECTO (heuristica documentada, no prediccion)
+  const W = { freq: 20, trend: 12, parity: 6, dist: 10, sum: 8, range: 6,
+              consec: 5, pairs: 8, anti: 12, popular: 13 };
+
+  // ---------- utilidades ----------
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function clamp(x, a, b) { return x < a ? a : (x > b ? b : x); }
+  function fmt1(x) { return (Math.round(x * 10) / 10).toFixed(1); }
+  function combIs(n) { return n === 1 ? [0] : (n === 2 ? [0, 1] : [0, 1, 2]); }
+  function gen(a, n) { const r = []; for (let i = 0; i < n; i++) r.push(a[i]); return r; }
+  function intersection(a, b) { let c = 0; for (const x of a) if (b.indexOf(x) >= 0) c++; return c; }
+  function sorted(a) { return a.slice().sort((x, y) => x - y); }
+  function validity(comb) {
+    return comb.length === 6 && comb.every(x => Number.isInteger(x) && x >= 0 && x <= 45)
+      && new Set(comb).size === 6;
+  }
+
+  // ---------- MODELO (metricas por numero, desde pasado) ----------
+  function buildModel(past, mode) {
+    const cnt = new Int32Array(BALLS), lag = new Int32Array(BALLS);
+    const windows = [{len: 15, cnt: new Int32Array(BALLS)}, {len: 30, cnt: new Int32Array(BALLS)},
+                     {len: 75, cnt: new Int32Array(BALLS)}, {len: 150, cnt: new Int32Array(BALLS)},
+                     {len: 300, cnt: new Int32Array(BALLS)}];
+    for (let j = 0; j < BALLS; j++) lag[j] = past.length;
+    const M = past.length;
+    for (let i = 0; i < M; i++) {
+      const nums = past[i][2 + MODES.indexOf(mode)];
+      for (const n of nums) {
+        cnt[n]++;
+        for (const w of windows) if (M - 1 - i < w.len) w.cnt[n]++;
+        lag[n] = 0;
+      }
+      for (let j = 0; j < BALLS; j++) if (lag[j] !== 0) lag[j]++;
+    }
+    // frecuencia normalizada (z) vs esperado
+    const E = M * P_BALL, sd = Math.sqrt(E * (1 - P_BALL));
+    const zF = new Float64Array(BALLS);
+    for (let j = 0; j < BALLS; j++) zF[j] = clamp((cnt[j] - E) / (sd + 1e-9), -2.5, 2.5);
+    // tendencia multiventana
+    const trend = new Float64Array(BALLS);
+    for (let j = 0; j < BALLS; j++) {
+      const r15 = windows[0].cnt[j] / 15, r30 = windows[1].cnt[j] / 30,
+            r75 = windows[2].cnt[j] / 75, r150 = windows[3].cnt[j] / 150;
+      trend[j] = clamp((0.4 * r15 + 0.3 * r30 + 0.2 * r75 + 0.1 * r150) / P_BALL, 0, 2.2);
+    }
+    // pares
+    const pairCnt = new Int32Array(BALLS * BALLS);
+    for (let i = 0; i < M; i++) {
+      const nums = past[i][2 + MODES.indexOf(mode)];
+      for (let a = 0; a < 6; a++) for (let b = a + 1; b < 6; b++) pairCnt[nums[a] * BALLS + nums[b]]++;
+    }
+    // consecutivos historicos (clases 0,1,2,3+)
+    const consHist = [0, 0, 0, 0];
+    let sumAll = 0;
+    for (let i = 0; i < M; i++) {
+      const nums = sorted(past[i][2 + MODES.indexOf(mode)]);
+      let c = 0; for (let k = 0; k < 5; k++) if (nums[k + 1] === nums[k] + 1) c++;
+      consHist[Math.min(c, 3)]++;
+      let s = 0; for (const n of nums) s += n; sumAll += s;
+    }
+    const sumMean = sumAll / M;
+    let sv = 0;
+    for (let i = 0; i < M; i++) {
+      const nums = sorted(past[i][2 + MODES.indexOf(mode)]);
+      let s = 0; for (const n of nums) s += n;
+      sv += (s - sumMean) * (s - sumMean);
+    }
+    const sumStd = Math.sqrt(sv / M);
+    return { cnt, lag, tr: trend, zF, pairCnt, consHist, sumMean, sumStd, M,
+             pairExp: M / PAIR_DIV };
+  }
+
+  // ---------- componentes de score (0..1) ----------
+  function scoreCombo(nums, mdl, W, used) {
+    nums = sorted(nums);
+    // frecuencia y tendencia
+    let f = 0, t = 0;
+    for (const n of nums) { f += mdl.zF[n]; t += mdl.tr[n]; }
+    f = clamp(f / 6 / 2.5, 0, 1); t = clamp(t / 6 / 2.2, 0, 1);
+    // paridad (preferencia no absoluta)
+    let e = 0; for (const n of nums) if (n % 2 === 0) e++;
+    const pari = 1 - Math.min(Math.abs(e - 3), 3) / 3;
+    // decenas
+    const dec = [0, 0, 0, 0, 0];
+    for (const n of nums) dec[n >= 40 ? 4 : Math.floor(n / 10)]++;
+    let k = 0, mx = 0, mn = 6;
+    for (const d of dec) { if (d > 0) k++; if (d > mx) mx = d; if (d < mn) mn = d; }
+    const dist = 0.5 * (k / 5) + 0.5 * clamp(1 - (mx - mn) / Math.max(mx, 1), 0, 1);
+    // rango y suma
+    const rng = nums[5] - nums[0];
+    const range = 1 - Math.abs(rng - 35) / 35;
+    let s = 0; for (const n of nums) s += n;
+    const sum = clamp(1 - Math.abs(s - mdl.sumMean) / (2.5 * mdl.sumStd + 8), 0, 1);
+    // consecutivos: segun frecuencia historica (no eliminar)
+    let cc = 0; for (let q = 0; q < 5; q++) if (nums[q + 1] === nums[q] + 1) cc++;
+    const cons = (mdl.consHist[Math.min(cc, 3)] + 0.2) / (mdl.M / 4 + 0.2);
+    // pares: premiar pares tipicos, penalizar sobre-repetidos
+    let pairs = 0;
+    for (let a = 0; a < 6; a++) for (let b = a + 1; b < 6; b++) {
+      const obs = mdl.pairCnt[nums[a] * BALLS + nums[b]];
+      const ev = Math.max(mdl.pairExp, 1);
+      pairs += obs <= ev * 1.3 ? Math.min(obs / ev, 1) : Math.max(0, 1 - (obs - ev * 1.3) / (ev * 3));
+    }
+    const pair = pairs / 15;
+    // anti-patrones y popularidad humana
+    const ap = antiPattern(nums), pop = popular(nums);
+    const score = (W.freq * f + W.trend * t + W.parity * pari + W.dist * dist +
+                   W.sum * sum + W.range * range + W.consec * cons + W.pairs * pair +
+                   W.anti * ap + W.popular * pop);
+    let sl = 0; for (const k in W) sl += W[k];
+    let total = score / sl;
+    if (used) for (const n of nums) total -= (used[n] || 0) * 4.5;
+    return { total: clamp(total, 0, 1), f, t, pari, dist, range, sum, cons, pair, ap, pop, parity: e };
+  }
+
+  function antiPattern(nums) {
+    let p = 0;
+    for (let q = 0; q < 4; q++) if (nums[q + 1] === nums[q] + 1 && nums[q + 2] === nums[q + 1] + 1) { p += 0.28; break; }
+    const low = nums.filter(x => x <= 31).length;
+    if (low === 6) p += 0.4; else if (low >= 5) p += 0.22; else if (low >= 4) p += 0.1;
+    const ends = {};
+    for (const n of nums) ends[n % 10] = (ends[n % 10] || 0) + 1;
+    let mxE = 0; for (const k in ends) mxE = Math.max(mxE, ends[k]);
+    if (mxE >= 4) p += 0.3; else if (mxE >= 3) p += 0.15;
+    if (nums[5] - nums[0] === 5 && nums.every((v, i, a) => i === 0 || v - a[i - 1] === 1)) p += 0.3;
+    if (nums[0] >= 30 || nums[5] <= 15) p += 0.2;
+    return clamp(1 - p, 0, 1);
+  }
+
+  function popular(nums) {
+    let p = 0;
+    if (nums.every(x => x <= 31)) p += 0.35;
+    const lowN = nums.filter(x => x <= 31).length;
+    if (lowN >= 5) p += 0.2;
+    const avg = nums.reduce((a, b) => a + b, 0) / 6;
+    if (avg < 17) p += 0.25;
+    let mult = 0;
+    for (let base = 2; base <= 10; base++) {
+      let c = 0; for (const n of nums) if (n % base === 0) c++;
+      if (c >= 5) mult++;
+    }
+    p += Math.min(mult, 2) * 0.15;
+    const ends = {};
+    for (const n of nums) ends[n % 10] = (ends[n % 10] || 0) + 1;
+    let mxE = 0; for (const k in ends) mxE = Math.max(mxE, ends[k]);
+    if (mxE >= 4) p += 0.25; else if (mxE >= 3) p += 0.12;
+    const high = nums.filter(x => x > 31).length;
+    p -= high >= 2 ? 0.2 : (high === 1 ? 0.1 : 0);
+    return clamp(1 - p, 0, 1);
+  }
+
+  // ---------- generacion de combinaciones ----------
+  function enumerate(pool, k, scoreFn) {
+    let best = null, bs = -1;
+    const P = pool.length, idx = Array(k).fill(0);
+    function rec(start, d) {
+      if (d === k) {
+        const combo = d === 0 ? [] : idx.map((v, i) => pool[v]);
+        const s = scoreFn(combo);
+        if (s > bs) { bs = s; best = combo.slice(); }
+        return;
+      }
+      for (let i = start; i <= P - (k - d); i++) { idx[d] = i; rec(i + 1, d + 1); }
+    }
+    rec(0, 0);
+    return { combo: best, score: bs };
+  }
+
+  function buildPool(mdl, size) {
+    const r = [];
+    for (let j = 0; j < BALLS; j++) r.push(j);
+    r.sort((a, b) => (0.55 * mdl.zF[b] + 0.45 * mdl.tr[b]) - (0.55 * mdl.zF[a] + 0.45 * mdl.tr[a]));
+    return r.slice(0, size);
+  }
+
+  function genPlay(mdl, weights, poolSize, used) {
+    const pool = buildPool(mdl, poolSize);
+    const res = enumerate(pool, 6, c => validity(c) ? scoreCombo(c, mdl, weights, used).total : -1);
+    return { combo: sorted(res.combo), sc: scoreCombo(res.combo, mdl, weights, used), res };
+  }
+
+  function markUsed(used, combo) { for (const n of combo) used[n] = (used[n] || 0) + 1; }
+
+  function generateAllPlays(mdl) {
+    const used = {};
+    const p1 = genPlay(mdl, W, 16, used); markUsed(used, p1.combo);
+    const W2 = Object.assign({}, W, { parity: 18, dist: 18, sum: 14, range: 12, freq: 6, trend: 6, consec: 4, pairs: 6, anti: 5, popular: 5 });
+    const p2 = genPlay(mdl, W2, 16, used); markUsed(used, p2.combo);
+    const W3 = Object.assign({}, W, { anti: 30, popular: 34, consec: 10, freq: 5, trend: 5, parity: 3, dist: 4, sum: 3, range: 3, pairs: 3 });
+    const p3 = genPlay(mdl, W3, 16, used); markUsed(used, p3.combo);
+    const W4 = Object.assign({}, W, { freq: 15, trend: 15, parity: 8, dist: 12, sum: 10, range: 8, consec: 5, pairs: 8, anti: 12, popular: 10 });
+    const p4 = genPlay(mdl, W4, 18, used); markUsed(used, p4.combo);
+    // reducir solapamiento entre jugadas relevantes
+    const plays = [p1, p2, p3, p4];
+    for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) {
+      let o = intersection(plays[i].combo, plays[j].combo);
+      while (o > 2) {
+        // reemplazar uno de los compartidos (el peor contribuyente) con sustituto no usado
+        for (const n of plays[j].combo) if (plays[i].combo.indexOf(n) >= 0) {
+          const repl = candidateReplacement(mdl, W, plays[j].combo, n, plays);
+          if (repl < 0) break;
+          plays[j].combo = sorted(plays[j].combo.map(x => x === n ? repl : x));
+          o--;
+        }
+      }
+    }
+    return plays.map(p => ({ combo: sorted(p.combo), sc: scoreCombo(p.combo, mdl, W, null) }));
+  }
+
+  function candidateReplacement(mdl, weights, combo, target, plays) {
+    const bad = {};
+    for (const p of plays) for (const n of p.combo) bad[n] = (bad[n] || 0) + 1;
+    const rest = combo.filter(x => x !== target);
+    let best = -1, bs = -Infinity;
+    for (let n = 0; n < BALLS; n++) {
+      if (combo.indexOf(n) >= 0 || (bad[n] || 0) > 0) continue;
+      const sc = scoreCombo(sorted(rest.concat([n])), mdl, weights, null).total;
+      if (sc > bs) { bs = sc; best = n; }
+    }
+    return best;
+  }
+
+  // ---------- Frecuencia esperada ----------
+  function expectedFreq(mode) {
+    const rows = [];
+    const cnt = new Int32Array(BALLS);
+    let M = 0;
+    for (const d of DRAWS) { for (const n of d[2 + MODES.indexOf(mode)]) cnt[n]++; M++; }
+    const E = M * P_BALL, sd = Math.sqrt(E * (1 - P_BALL));
+    const devs = [];
+    for (let j = 0; j < BALLS; j++) {
+      const obs = cnt[j];
+      const dif = obs - E;
+      const rel = sd > 0 ? dif / sd : 0;
+      rows.push({ n: j, obs, exp: E, dif, rel });
+      devs.push(dif);
+    }
+    return { rows, devs, M };
+  }
+
+  // ---------- multiventana (tendencia) ----------
+  function multiWindow(mode) {
+    const WNDS = [15, 30, 75, 150, 300];
+    const cnt = {}; WNDS.forEach(w => cnt[w] = new Int32Array(BALLS));
+    const full = new Int32Array(BALLS);
+    const M = DRAWS.length;
+    for (let i = 0; i < M; i++) {
+      const nums = DRAWS[i][2 + MODES.indexOf(mode)];
+      for (const n of nums) {
+        full[n]++;
+        for (const w of WNDS) if (M - 1 - i < w) cnt[w][n]++;
+      }
+    }
+    const rows = [];
+    for (let j = 0; j < BALLS; j++) {
+      const r = { n: j, f: full[j], w: {}, score: 0, lag: DRAWS.length };
+    }
+    // atraso
+    const lag = new Int32Array(BALLS);
+    for (let j = 0; j < BALLS; j++) { lag[j] = M; }
+    for (let i = 0; i < M; i++) {
+      const nums = DRAWS[i][2 + MODES.indexOf(mode)];
+      for (const n of nums) lag[n] = 0;
+      for (let j = 0; j < BALLS; j++) if (lag[j] !== 0) lag[j]++;
+    }
+    const out = [];
+    for (let j = 0; j < BALLS; j++) {
+      const r15 = cnt[15][j] / 15, r30 = cnt[30][j] / 30, r75 = cnt[75][j] / 75,
+            r150 = cnt[150][j] / 150, r300 = cnt[300][j] / 300;
+      const score = clamp((0.4 * r15 + 0.3 * r30 + 0.2 * r75 + 0.1 * r150) / P_BALL, 0, 2.2);
+      out.push({ n: j, full: full[j], w15: cnt[15][j], w30: cnt[30][j], w75: cnt[75][j],
+                 w150: cnt[150][j], w300: cnt[300][j], score, lag: lag[j] });
+    }
+    out.sort((a, b) => b.score - a.score);
+    return { rows: out, WNDS };
+  }
+
+  // ---------- consecutivos historicos ----------
+  function consecHist(mode) {
+    const h = [0, 0, 0, 0];
+    for (const d of DRAWS) {
+      const nums = sorted(d[2 + MODES.indexOf(mode)]);
+      let c = 0; for (let k = 0; k < 5; k++) if (nums[k + 1] === nums[k] + 1) c++;
+      h[Math.min(c, 3)]++;
+    }
+    return h;
+  }
+
+  function sumHist(mode) {
+    const sums = [];
+    for (const d of DRAWS) sums.push(sorted(d[2 + MODES.indexOf(mode)]).reduce((a, b) => a + b, 0));
+    return sums;
+  }
+
+  function distDecades(mode) {
+    const dec = [0, 0, 0, 0, 0];
+    let par = 0, impar = 0;
+    for (const d of DRAWS) for (const n of d[2 + MODES.indexOf(mode)]) {
+      dec[n >= 40 ? 4 : Math.floor(n / 10)]++;
+      if (n % 2 === 0) par++; else impar++;
+    }
+    return { dec, par, impar };
+  }
+
+  // ---------- BACKTEST (walk-forward, sin datos futuros) ----------
+  function backtest() {
+    const START = 250;
+    const algo = [], ran = [];
+    for (let i = START; i < N; i++) {
+      const past = DRAWS.slice(0, i);
+      const actual = DRAWS[i][2];
+      const mdl = buildModel(past, 'tradicional');
+      const play = genPlay(mdl, W, 14, null);
+      algo.push(intersection(play.combo, actual));
+      for (let r = 0; r < 3; r++) {
+        const comb = [];
+        while (comb.length < 6) { const x = Math.floor(Math.random() * BALLS); if (comb.indexOf(x) < 0) comb.push(x); }
+        ran.push(intersection(comb, actual));
+      }
+    }
+    return { algo, ran };
+  }
+
+  // ---------- teorica ----------
+  function teorica() {
+    // C(6,k)*C(40,6-k)/C(46,6)
+    const c = (a, b) => { if (b < 0 || b > a) return 0; let r = 1; for (let i = 0; i < b; i++) r = r * (a - i) / (i + 1); return Math.round(r); };
+    const t = [];
+    for (let k = 0; k <= 6; k++) t.push(c(6, k) * c(40, 6 - k) / TOTAL_COMB);
+    return t;
+  }
+
+  // ========================= RENDER =========================
+  const el = (id) => document.getElementById(id);
+
+  function htmlCard(nums, sc, label, popularLabel, eqLabel) {
+    return '<div class="play"><div class="play-head"><span class="play-tag">' + label + '</span>' +
+      '<span class="play-score"><b>' + fmt1(sc.total * 100) + '</b>/100</span></div>' +
+      '<div class="play-nums">' + nums.map(x => '<span class="pb' + (x > 31 ? ' pbHi' : '') + '">' + pad(x) + '</span>').join('') + '</div>' +
+      '<div class="scorebar"><i style="width:' + (sc.total * 100).toFixed(1) + '%"></i></div>' +
+      '<div class="play-meta"><span>Popularidad: ' + popularLabel + '</span><span>Equilibrio: ' + eqLabel + '</span></div>' +
+      '<div class="play-break">' +
+      row('Frecuencia', sc.f) + row('Tendencia', sc.t) + row('Equilibrio', (sc.pari + sc.dist + sc.sum + sc.range) / 4) +
+      row('Distribución', sc.dist) + row('Anti-patrones', sc.ap) + row('Popularidad est.', sc.pop) +
+      '</div></div>';
+  }
+  function row(l, v) {
+    return '<div class="brow"><span>' + l + '</span><div class="bmini"><i style="width:' + (clamp(v, 0, 1) * 100).toFixed(1) + '%"></i></div><b>' + fmt1(clamp(v, 0, 1) * 100) + '</b></div>';
+  }
+
+  function popLabel(p) { return p >= 0.8 ? 'Improbable (poco jugada)' : p >= 0.6 ? 'Poco jugada' : p >= 0.4 ? 'Media' : 'Muy jugada'; }
+  function eqLabel(sc) { const v = (sc.pari + sc.dist + sc.sum + sc.range) / 4; return v >= 0.65 ? 'Alto' : v >= 0.45 ? 'Medio' : 'Bajo'; }
+
+  function bars(canvas, labels, groups, fmt) {
+    // groups: array de {name, color, vals:[]}
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement.getBoundingClientRect ? canvas : canvas;
+    const cw = canvas.clientWidth || 600, ch = canvas.clientHeight || 150;
+    canvas.width = cw * dpr; canvas.height = ch * dpr; canvas.style.width = cw + 'px'; canvas.style.height = ch + 'px';
+    const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, cw, ch);
+    const padL = 26, padB = 20, padT = 8, padR = 8;
+    let mx = 0; groups.forEach(g => g.vals.forEach(v => mx = Math.max(mx, Math.abs(v))));
+    mx = mx || 1;
+    const n = labels.length, bw = (cw - padL - padR) / n;
+    const range = 2 * mx;
+    const yOf = v => ch - padB - ((v + mx) / range) * (ch - padT - padB);
+    ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1; ctx.beginPath();
+    ctx.moveTo(padL, yOf(0)); ctx.lineTo(cw - padR, yOf(0)); ctx.stroke();
+    for (let g = 0; g < groups.length; g++) {
+      ctx.fillStyle = groups[g].color;
+      for (let i = 0; i < n; i++) {
+        const v = groups[g].vals[i];
+        const x = padL + i * bw + bw * (0.1 + g * 0.26);
+        const w = bw * 0.24;
+        const y1 = yOf(v), y2 = yOf(0);
+        ctx.fillRect(x, Math.min(y1, y2), w, Math.max(1, Math.abs(y2 - y1)));
+      }
+    }
+    ctx.fillStyle = '#8b98a9'; ctx.font = '9px system-ui';
+    ctx.textAlign = 'center';
+    const step = Math.max(1, Math.ceil(n / (cw > 500 ? 46 : 20)));
+    for (let i = 0; i < n; i += step) ctx.fillText(String(labels[i]), padL + i * bw + bw / 2, ch - 6);
+  }
+
+  function pie(canvas, parts, title) {
+    const dpr = window.devicePixelRatio || 1;
+    const cw = canvas.clientWidth || 190, ch = canvas.clientHeight || 190;
+    canvas.width = cw * dpr; canvas.height = ch * dpr; canvas.style.width = cw + 'px'; canvas.style.height = ch + 'px';
+    const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, cw, ch);
+    const cx = cw / 2, cy = ch / 2, R = ch / 2 - 8;
+    let tot = 0; parts.forEach(p => tot += p.v);
+    if (!tot) return;
+    let a = -Math.PI / 2;
+    for (const p of parts) {
+      const w2 = (p.v / tot) * 2 * Math.PI;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, a, a + w2); ctx.closePath();
+      ctx.fillStyle = p.color; ctx.fill();
+      a += w2;
+    }
+    ctx.fillStyle = '#161b22'; ctx.beginPath(); ctx.arc(cx, cy, R * 0.55, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = '#e6edf3'; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText(title, cx, cy);
+  }
+
+  // ---------- MAIN ----------
+  function main() {
+    const valid = { ok: 0, bad: 0, msgs: [] };
+    let prevNro = 0, prevDate = '';
+    for (let i = 0; i < N; i++) {
+      const d = DRAWS[i], ok = [1, 2, 3, 4].every(g => validity(d[g]));
+      const dup = i > 0 && d[0] <= prevNro;
+      const dp = /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(d[1]);
+      if (!ok) valid.bad++;
+      else valid.ok++;
+      if (i < 5) {
+        if (!ok) valid.msgs.push('Sorteo #' + d[0] + ': combinación inválida en alguna modalidad.');
+        if (dup) valid.msgs.push('Sorteo #' + d[0] + ': número fuera de orden.');
+        if (!dp) valid.msgs.push('Sorteo #' + d[0] + ': fecha con formato raro.');
+      }
+      prevNro = d[0]; prevDate = d[1];
+    }
+    valid.msgs.push('Rango de bolillas verificado: 00 a 45 (el 00 es válido: el Quini 6 oficial usa 46 bolillas).');
+    if (valid.bad === 0) valid.msgs.push('Los ' + N + ' sorteos pasaron la validación (sin duplicados, sin números fuera de rango).');
+    el('validation').innerHTML = '<b>Resultado: ' + valid.ok + ' sorteos válidos, ' + valid.bad + ' inválidos.</b><br>' + valid.msgs.join('<br>');
+
+    // ---------- encabezado
+    const ult = DRAWS[N - 1];
+    el('meta').innerHTML = 'Histórico: <b>' + N + ' sorteos</b> (09/2020 → 09/2026) · Fuente: Lotería de Santa Fe (oficial) · Último: #' + ult[0] + ' del ' + ult[1];
+
+    // ---------- sec hero: predicciones
+    const hero = el('hero');
+    hero.innerHTML = '<h2>🎯 Predictor estadístico</h2>' +
+      '<p class="hero-txt">Analizamos el histórico disponible y evaluamos combinaciones mediante múltiples criterios estadísticos (frecuencia, tendencia reciente, distribución, atraso, patrones y popularidad humana). El score <b>reordena combinaciones</b> para elegir jugadas equilibradas y poco populares, pero <b>no cambia la probabilidad matemática</b>: toda combinación tiene 1 en ' + TOTAL_COMB.toLocaleString('es-AR') + '.</p>';
+    const mdl = buildModel(DRAWS, 'tradicional');
+    const plays = generateAllPlays(mdl);
+    el('playOpt').innerHTML = htmlCard(plays[0].combo, plays[0].sc, '🏆 Jugada óptima estadística', popLabel(plays[0].sc.pop), eqLabel(plays[0].sc));
+    el('playEq').innerHTML = htmlCard(plays[1].combo, plays[1].sc, '⚖️ Jugada equilibrada', popLabel(plays[1].sc.pop), eqLabel(plays[1].sc));
+    el('playAnti').innerHTML = htmlCard(plays[2].combo, plays[2].sc, '🛡️ Anti-patrones', popLabel(plays[2].sc.pop), eqLabel(plays[2].sc));
+    el('playDiv').innerHTML = htmlCard(plays[3].combo, plays[3].sc, '🧭 Diversificación', popLabel(plays[3].sc.pop), eqLabel(plays[3].sc));
+
+    // jugadas por modalidad
+    const modPlay = el('modPlays');
+    let mph = '';
+    for (const m of MODES) {
+      const mm = buildModel(DRAWS, m);
+      const p = genPlay(mm, W, 16, null);
+      mph += '<div class="modplay"><span class="mtag">' + MODE_NAME[m] + '</span><div class="play-nums">' +
+        p.combo.map(x => '<span class="pb pbHi">' + pad(x) + '</span>').join('') +
+        '</div><span class="mscore">' + fmt1(p.sc.total * 100) + '/100</span></div>';
+    }
+    modPlay.innerHTML = mph;
+
+    // ---------- frec esperada
+    const ef = expectedFreq('tradicional');
+    const sortedDev = ef.rows.slice().sort((a, b) => (b.obs - a.obs) * Math.abs(b.rel) - (a.obs - b.obs) * Math.abs(a.rel));
+    const topObs = ef.rows.slice().sort((a, b) => b.obs - a.obs).slice(0, 12);
+    const topNeg = ef.rows.slice().sort((a, b) => (a.obs - a.exp) - (b.obs - b.exp)).slice(0, 12);
+    let ft = '<tr><th>Número</th><th>Obs.</th><th>Esperado</th><th>Dif.</th><th>Desv (σ)</th></tr>';
+    // tabla top observados
+    for (const r of topObs) ft += '<tr><td>' + pad(r.n) + '</td><td>' + r.obs + '</td><td>' + r.exp.toFixed(1) + '</td><td>' + (r.dif >= 0 ? '+' : '') + r.dif.toFixed(1) + '</td><td>' + (r.rel >= 0 ? '+' : '') + r.rel.toFixed(2) + '</td></tr>';
+    el('freqExp').innerHTML = '<div class="card"><h3>Tradicional — más salidos vs. esperado matemático (' + ef.M + ' sorteos, esperado ' + (ef.M * P_BALL).toFixed(1) + ')</h3><div class="tblwrap"><table>' + ft + '</table></div></div>';
+    el('chartDev').innerHTML = '<h3>Desviación observado − esperado (σ) por número</h3><canvas height="150" style="width:100%;height:150px" id="cvDev"></canvas>';
+    setTimeout(() => {
+      const cv = el('cvDev');
+      rf(cv);
+      bars(cv, Array.from({ length: 46 }, (_, i) => pad(i)), [{ name: 'obs-exp', color: '#58a6ff', vals: ef.devs }], true);
+    }, 30);
+    function rf(cv) { /* ensure canvas kept */ }
+
+    // ---------- multiventana / tendencia
+    const mw = multiWindow('tradicional');
+    let mwt = '<tr><th>Tend</th><th>N°</th><th>15</th><th>30</th><th>75</th><th>150</th><th>300</th><th>Total</th><th>Atraso</th></tr>';
+    for (const r of mw.rows.slice(0, 15)) mwt += '<tr><td>' + fmt1(r.score) + '</td><td><b>' + pad(r.n) + '</b></td><td>' + r.w15 + '</td><td>' + r.w30 + '</td><td>' + r.w75 + '</td><td>' + r.w150 + '</td><td>' + r.w300 + '</td><td>' + r.full + '</td><td>' + r.lag + '</td></tr>';
+    el('multiWin').innerHTML = '<div class="card"><h3>Tendencia multiventana (Tradicional) — top 15 por score de tendencia</h3><p class="hint">La tendencia refleja frecuencia reciente ponderada. Es un <b>resumen estadístico</b>, no una predicción segura.</p><div class="tblwrap"><table>' + mwt + '</table></div></div>';
+
+    // ---------- atraso
+    const lag = multiWindow('tradicional').rows.slice().sort((a, b) => b.lag - a.lag).slice(0, 10);
+    let lagt = '<tr><th>N°</th><th>Sorteos sin salir</th></tr>';
+    for (const r of lag) lagt += '<tr><td><b>' + pad(r.n) + '</b></td><td>' + r.lag + '</td></tr>';
+    el('atraso').innerHTML = '<div class="card"><h3>Atraso actual (Tradicional)</h3><p class="hint">Variable <b>secundaria</b>: un número atrasado no tiene mayor probabilidad de salir.</p><div class="tblwrap"><table>' + lagt + '</table></div></div>';
+
+    // ---------- consecutivos
+    const ch = consecHist('tradicional');
+    let cht = '<tr><th>Parejas consecutivas</th><th>Sorteos</th><th>%</th></tr>';
+    const names = ['0', '1', '2', '3 o más'];
+    cht += names.map((nm, i) => '<tr><td>' + nm + '</td><td>' + ch[i] + '</td><td>' + (ch[i] / N * 100).toFixed(1) + '%</td></tr>').join('');
+    el('consec').innerHTML = '<div class="card"><h3>Consecutivos en el histórico (Tradicional)</h3><div class="tblwrap"><table>' + cht + '</table></div></div>';
+
+    // ---------- distribucion (pares/impares, decenas, sumas)
+    const dd = distDecades('tradicional');
+    el('distDec').innerHTML = '<h3>Decenas (Tradicional)</h3><div class="tblwrap"><table><tr><th>Rango</th><th>Veces</th><th>%</th></tr>' +
+      ['00-09', '10-19', '20-29', '30-39', '40-45'].map((nm, i) => '<tr><td>' + nm + '</td><td>' + dd.dec[i] + '</td><td>' + (dd.dec[i] / (N * 6) * 100).toFixed(1) + '%</td></tr>').join('') + '</table></div>';
+    el('distPar').innerHTML = '<h3>Pares / Impares (Tradicional)</h3><table><tr><th></th><th>Veces</th><th>%</th></tr><tr><td>Pares</td><td>' + dd.par + '</td><td>' + (dd.par / (N * 6) * 100).toFixed(1) + '%</td></tr><tr><td>Impares</td><td>' + dd.impar + '</td><td>' + (dd.impar / (N * 6) * 100).toFixed(1) + '%</td></tr></table>';
+    const sums = sumHist('tradicional');
+    const sMean = sums.reduce((a, b) => a + b, 0) / sums.length;
+    let sv = 0; sums.forEach(s => sv += (s - sMean) * (s - sMean));
+    el('distSum').innerHTML = '<h3>Suma total de combinaciones (Tradicional)</h3><table><tr><th>Promedio</th><th>Desv.</th><th>Mín</th><th>Máx</th></tr><tr><td>' + sMean.toFixed(0) + '</td><td>' + Math.sqrt(sv / sums.length).toFixed(0) + '</td><td>' + Math.min.apply(null, sums) + '</td><td>' + Math.max.apply(null, sums) + '</td></tr></table>';
+    el('pieOpt').innerHTML = '<h3>Paridad — jugada óptima</h3><canvas id="cvPie" height="190" style="width:190px;height:190px;display:block;margin:auto"></canvas>';
+    setTimeout(() => {
+      const cv = el('cvPie');
+      const p = plays[0].sc.parity;
+      pie(cv, [{ v: p, color: '#58a6ff' }, { v: 6 - p, color: '#a4b1c2' }], p + ' par / ' + (6 - p) + ' imp');
+    }, 30);
+
+    // ---------- juegos populares / antipatrones explicados
+    // ---------- ultimos sorteos
+    let ut = '';
+    for (let i = Math.max(0, N - 8); i < N; i++) {
+      const d = DRAWS[i];
+      let cols = '';
+      for (let g = 2; g <= 5; g++) cols += '<div>' + MODE_SHORT[MODES[g - 2]] + ': ' + d[g].map(x => '<span class="b sm">' + pad(x) + '</span>').join(' ') + '</div>';
+      ut += '<div class="sorteo"><span class="nro">#' + d[0] + '</span><span class="f">' + d[1] + '</span>' + cols + '</div>';
+    }
+    el('lastDraws').innerHTML = ut;
+
+    // ---------- backtest
+    el('btStatus').textContent = 'Calculando backtest sobre ' + (N - 250) + ' sorteos recorridos sin usar datos futuros…';
+    setTimeout(function () {
+      const bt = backtest();
+      const t = teorica();
+      renderBacktest(bt, t);
+    }, 20);
+  }
+
+  function renderBacktest(bt, t) {
+    el('btStatus').textContent = '';
+    const algo = bt.algo, ran = bt.ran;
+    const distA = [0, 0, 0, 0, 0, 0, 0], distR = [0, 0, 0, 0, 0, 0, 0];
+    algo.forEach(h => distA[h]++); ran.forEach(h => distR[h]++);
+    const nA = algo.length, nR = ran.length;
+    const meanA = algo.reduce((a, b) => a + b, 0) / nA;
+    const meanR = ran.reduce((a, b) => a + b, 0) / nR;
+    const p3A = algo.filter(h => h >= 3).length / nA * 100;
+    const p4A = algo.filter(h => h >= 4).length / nA * 100;
+    const p3R = ran.filter(h => h >= 3).length / nR * 100;
+    const p4R = ran.filter(h => h >= 4).length / nR * 100;
+    let rt = '<tr><th>Componentes</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>Media</th></tr>';
+    rt += '<tr><td>Algoritmo</td>' + distA.map(h => '<td>' + h + '</td>').join('') + '<td>' + meanA.toFixed(3) + '</td></tr>';
+    rt += '<tr><td>Aleatorio</td>' + distR.map(h => '<td>' + h + '</td>').join('') + '<td>' + meanR.toFixed(3) + '</td></tr>';
+    rt += '<tr><td>Teórica</td>' + [0, 1, 2, 3, 4, 5, 6].map(k => '<td>≈' + (t[k] * 100).toFixed(0) + '%</td>').join('') + '<td>0.783</td></tr>';
+    el('btTable').innerHTML = rt;
+    el('btBars').innerHTML = '<div class="bars"><div class="bar-box"><span>Algoritmo</span><canvas id="cvBtA" height="150" style="width:100%;height:150px"></canvas></div><div class="bar-box"><span>Aleatorio</span><canvas id="cvBtR" height="150" style="width:100%;height:150px"></canvas></div></div>';
+    setTimeout(function () {
+      bars(el('cvBtA'), ['0', '1', '2', '3', '4', '5', '6'],
+           [{ name: 'algo', color: '#238636', vals: distA }]);
+      bars(el('cvBtR'), ['0', '1', '2', '3', '4', '5', '6'],
+           [{ name: 'ran', color: '#a4b1c2', vals: distR }]);
+    }, 20);
+    const delta = meanA - meanR;
+    let conf, verdict, confCls;
+    if (delta > 0.03 && p3A > p3R + 4) { conf = 'Alta'; confCls = 'confHi'; verdict = 'El modelo mostró una pequeña ventaja sobre el azar en esta muestra. Aun así, históricamente no hay evidencia de que ningún algoritmo pueda ganar consistentemente al juego.'; }
+    else if (delta > 0.01 || p3A > p3R + 1) { conf = 'Media'; confCls = 'confMid'; verdict = 'Los resultados del modelo son prácticamente iguales al azar, con una ligera dispersión favorable. El backtest NO demuestra una ventaja estadística confiable.'; }
+    else { conf = 'Baja'; confCls = 'confLow'; verdict = 'El backtest honesto muestra que el algoritmo NO rinde mejor que una combinación aleatoria. Esto es lo esperable en un sorteo independiente: ninguna selección altera la probabilidad matemática.'; }
+    el('confPanel').innerHTML = '<h3>Confianza del modelo</h3><div class="confbadge ' + confCls + '">' + conf + '</div>' +
+      '<p class="hint">La confianza refleja la <b>estabilidad del modelo estadístico frente al azar</b>, NO la probabilidad de ganar.</p>' + verdict;
+    el('btReport').innerHTML =
+      '<p><b>Sorteos evaluados:</b> ' + nA + ' (cada uno se predijo solo con la información anterior).</p>' +
+      '<p><b>Aciertos promedio:</b> algoritmo ' + meanA.toFixed(3) + ' vs. aleatorio ' + meanR.toFixed(3) + ' (delta ' + (delta >= 0 ? '+' : '') + delta.toFixed(3) + ').</p>' +
+      '<p><b>3+ aciertos:</b> algoritmo ' + p3A.toFixed(1) + '% vs. aleatorio ' + p3R.toFixed(1) + '% · <b>4+ aciertos:</b> ' + p4A.toFixed(1) + '% vs. ' + p4R.toFixed(1) + '%.</p>' +
+      '<p class="hint">Conclusión honesta: si el algoritmo no supera al azar, se muestra <b>tal cual</b>. Predicción no existe en un sorteo aleatorio.</p>';
+  }
+
+  document.addEventListener('DOMContentLoaded', main);
+})();
+
+</script>
+<script>document.getElementById("validation").textContent = "Validando…";</script>
 </body></html>
